@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "games.enchanted.eg_text_customiser.neoforge.mixin",
+  "compatibilityLevel": "JAVA_${java_ver}",
+  "mixins": [
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

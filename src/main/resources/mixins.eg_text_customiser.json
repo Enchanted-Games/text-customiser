@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "games.enchanted.eg_text_customiser.common.mixin",
+  "compatibilityLevel": "JAVA_${java_ver}",
+  "mixins": [
+  ],
+  "client": [
+    "FontMixin",
+    "TextColorMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
