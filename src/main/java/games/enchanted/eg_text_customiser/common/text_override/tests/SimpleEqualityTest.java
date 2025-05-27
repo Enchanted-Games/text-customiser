@@ -11,7 +11,7 @@ public class SimpleEqualityTest<T> implements PropertyTest<T> {
     }
 
     @Override
-    public boolean matches(T value) {
+    public boolean matches(@Nullable T value) {
         if(comparisonValue == null) return true;
         return comparisonValue.equals(value);
     }
