@@ -2,15 +2,21 @@
 /*package games.enchanted.eg_text_customiser.neoforge;
 
 import games.enchanted.eg_text_customiser.common.ModEntry;
+import games.enchanted.eg_text_customiser.common.text_override.TextOverrideReloadListener;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
 
 /^*
  * This is the entry point for your mod's forge side.
  ^/
-@Mod("eg_text_customiser")
+@Mod(value = "eg_text_customiser", dist = Dist.CLIENT)
 public class NeoForgeEntry {
-    public NeoForgeEntry() {
+    public NeoForgeEntry(IEventBus bus) {
         ModEntry.init();
+
+        bus.addListener((AddClientReloadListenersEvent event) -> event.addListener(TextOverrideReloadListener.LOCATION, new TextOverrideReloadListener()));
     }
 }
 *///?}

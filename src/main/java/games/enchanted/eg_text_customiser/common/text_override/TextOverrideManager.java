@@ -13,22 +13,18 @@ public class TextOverrideManager {
     public static TextOverrideDefinition testDef = new TextOverrideDefinition(
         null,
         null,
-        false,
+        true,
         null,
-        null,
+        true,
         null,
         null,
         null
     );
 
+    private static final Map<ResourceLocation, TextOverrideDefinition> TEXT_OVERRIDE_DEFINITIONS = new HashMap<>();
+
     private static final Map<FakeStyle, ResourceLocation> STYLE_TO_TEXT_OVERRIDE_LOCATION = new HashMap<>();
     private static final Map<Style, FakeStyle> STYLE_CACHE = new HashMap<>();
-
-    static {
-//        STYLE_TO_TEXT_OVERRIDE.put(new FakeStyle(new SpecialTextColour(6684672), null, false, false, false, false, false, ResourceLocation.withDefaultNamespace("default")), ResourceLocation.fromNamespaceAndPath(ModConstants.MOD_ID, "inv_text_override"));
-//        STYLE_TO_TEXT_OVERRIDE.put(new FakeStyle(SpecialTextColour.fromTextColor(TextColor.fromLegacyFormat(ChatFormatting.RED)), null, null, null, null, null, null, null), ResourceLocation.fromNamespaceAndPath(ModConstants.MOD_ID, "red_text_override"));
-//        STYLE_TO_TEXT_OVERRIDE.put(new FakeStyle(SpecialTextColour.fromTextColor(TextColor.fromLegacyFormat(ChatFormatting.BOLD)), null, null, null, null, null, null, null), ResourceLocation.fromNamespaceAndPath(ModConstants.MOD_ID, "bold_text_override"));
-    }
 
     public static boolean styleHasOverride(Style style) {
         FakeStyle fakeStyle = STYLE_CACHE.get(style);
@@ -37,6 +33,33 @@ public class TextOverrideManager {
             fakeStyle = FakeStyle.fromStyle(style);
             STYLE_CACHE.put(style, fakeStyle);
         }
-        return testDef.styleMatches(fakeStyle);
+
+        ResourceLocation cachedDefinitionLocation = STYLE_TO_TEXT_OVERRIDE_LOCATION.get(fakeStyle);
+        if(cachedDefinitionLocation != null) {
+            return TEXT_OVERRIDE_DEFINITIONS.get(cachedDefinitionLocation).styleMatches(fakeStyle);
+        }
+
+        for (Map.Entry<ResourceLocation, TextOverrideDefinition> entry : TEXT_OVERRIDE_DEFINITIONS.entrySet()) {
+            boolean hasMatched = entry.getValue().styleMatches(fakeStyle);
+            // TODO: cache styles that have no override definition
+            if(!hasMatched) return false;
+
+            STYLE_TO_TEXT_OVERRIDE_LOCATION.put(fakeStyle, entry.getKey());
+            return true;
+        }
+
+        return false;
+    }
+
+    public static void clearStyleCache() {
+        STYLE_CACHE.clear();
+    }
+
+    public static void registerOverride(ResourceLocation location, TextOverrideDefinition definition) {
+        TEXT_OVERRIDE_DEFINITIONS.put(location, definition);
+    }
+
+    public static void clearOverrides() {
+        TEXT_OVERRIDE_DEFINITIONS.clear();
     }
 }
