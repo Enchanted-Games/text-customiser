@@ -9,18 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TextOverrideManager {
-    // TODO: move TextOverrideDefinition to a proper place, and make it not hardcoded
-    public static TextOverrideDefinition testDef = new TextOverrideDefinition(
-        null,
-        null,
-        true,
-        null,
-        true,
-        null,
-        null,
-        null
-    );
-
     private static final Map<ResourceLocation, TextOverrideDefinition> TEXT_OVERRIDE_DEFINITIONS = new HashMap<>();
 
     private static final Map<FakeStyle, ResourceLocation> STYLE_TO_TEXT_OVERRIDE_LOCATION = new HashMap<>();

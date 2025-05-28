@@ -4,6 +4,4 @@ import org.jetbrains.annotations.Nullable;
 
 public interface PropertyTest<T> {
     boolean matches(@Nullable T value);
-
-    @Nullable T getComparisonValue();
 }

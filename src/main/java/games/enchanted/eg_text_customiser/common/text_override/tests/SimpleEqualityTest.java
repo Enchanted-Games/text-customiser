@@ -15,9 +15,4 @@ public class SimpleEqualityTest<T> implements PropertyTest<T> {
         if(comparisonValue == null) return true;
         return comparisonValue.equals(value);
     }
-
-    @Override
-    public @Nullable T getComparisonValue() {
-        return comparisonValue;
-    }
 }

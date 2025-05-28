@@ -11,7 +11,6 @@ public class FabricClientEntry implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         ModEntry.init();
-
         ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(new TextOverrideReloadListener());
     }
 }
