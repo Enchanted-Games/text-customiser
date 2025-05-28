@@ -15,48 +15,48 @@ public class TextOverrideManager {
 
     private static final Map<Style, FakeStyle> STYLE_CACHE = new HashMap<>();
     private static final Set<FakeStyle> UNMATCHED_STYLES = new HashSet<>();
-    private static final Map<FakeStyle, TextOverrideDefinition> MATCHED_STYLES = new HashMap<>();
+    private static final Map<FakeStyle, Style> MATCHED_STYLES = new HashMap<>();
 
-    public static boolean styleHasOverride(Style style) {
-        FakeStyle fakeStyle = STYLE_CACHE.get(style);
+    public static Style applyStyleOverride(Style originalStyle) {
+        FakeStyle fakeStyle = STYLE_CACHE.get(originalStyle);
         if(fakeStyle == null) {
-            Logging.info("Cached stayle: {}", style);
-            fakeStyle = FakeStyle.fromStyle(style);
-            STYLE_CACHE.put(style, fakeStyle);
+            Logging.info("Cached style: {}", originalStyle);
+            fakeStyle = FakeStyle.fromStyle(originalStyle);
+            STYLE_CACHE.put(originalStyle, fakeStyle);
         }
 
         if(UNMATCHED_STYLES.contains(fakeStyle)) {
-            return false;
+            return originalStyle;
         }
 
-        TextOverrideDefinition cachedDefinition = MATCHED_STYLES.get(fakeStyle);
-        if(cachedDefinition != null) {
-            return true;
+        Style cachedStyle = MATCHED_STYLES.get(fakeStyle);
+        if(cachedStyle != null) {
+            return cachedStyle;
         }
 
         for (Map.Entry<ResourceLocation, TextOverrideDefinition> entry : TEXT_OVERRIDE_DEFINITIONS.entrySet()) {
             boolean hasMatched = entry.getValue().styleMatches(fakeStyle);
             if(!hasMatched) {
                 UNMATCHED_STYLES.add(fakeStyle);
-                return false;
+                return originalStyle;
             }
 
-            MATCHED_STYLES.put(fakeStyle, entry.getValue());
-            return true;
+            Style modifiedStyle = entry.getValue().applyToStyle(originalStyle);
+            MATCHED_STYLES.put(fakeStyle, modifiedStyle);
+            return modifiedStyle;
         }
 
-        return false;
-    }
-
-    public static void clearStyleCache() {
-        STYLE_CACHE.clear();
+        return originalStyle;
     }
 
     public static void registerOverride(ResourceLocation location, TextOverrideDefinition definition) {
         TEXT_OVERRIDE_DEFINITIONS.put(location, definition);
     }
 
-    public static void clearOverrides() {
+    public static void clearCaches() {
         TEXT_OVERRIDE_DEFINITIONS.clear();
+        STYLE_CACHE.clear();
+        UNMATCHED_STYLES.clear();
+        MATCHED_STYLES.clear();
     }
 }

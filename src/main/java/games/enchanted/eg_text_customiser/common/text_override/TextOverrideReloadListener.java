@@ -31,8 +31,7 @@ public class TextOverrideReloadListener extends SimpleJsonResourceReloadListener
     @Override
     protected void apply(Map<ResourceLocation, TextOverrideDefinition> overrideDefinitions, ResourceManager resourceManager, ProfilerFiller profiler) {
         Logging.info("Running TextOverrideReloadListener");
-        TextOverrideManager.clearOverrides();
-        TextOverrideManager.clearStyleCache();
+        TextOverrideManager.clearCaches();
         overrideDefinitions.forEach(TextOverrideManager::registerOverride);
     }
 

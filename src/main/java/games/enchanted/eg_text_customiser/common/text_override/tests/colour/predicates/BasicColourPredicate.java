@@ -4,7 +4,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import games.enchanted.eg_text_customiser.common.Logging;
 import games.enchanted.eg_text_customiser.common.serialization.ColourCodecs;
 import games.enchanted.eg_text_customiser.common.text_override.fake_style.SpecialTextColour;
 

@@ -6,16 +6,17 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import games.enchanted.eg_text_customiser.common.Logging;
+import games.enchanted.eg_text_customiser.common.serialization.ColourCodecs;
 import games.enchanted.eg_text_customiser.common.text_override.fake_style.FakeStyle;
 import games.enchanted.eg_text_customiser.common.text_override.fake_style.SpecialTextColour;
 import games.enchanted.eg_text_customiser.common.text_override.tests.ColourTest;
 import games.enchanted.eg_text_customiser.common.text_override.tests.SimpleEqualityTest;
-import games.enchanted.eg_text_customiser.common.text_override.tests.colour.predicates.ColourPredicate;
 import games.enchanted.eg_text_customiser.common.text_override.tests.colour.ColourPredicates;
 import games.enchanted.eg_text_customiser.common.text_override.tests.colour.predicates.BasicColourPredicate;
+import games.enchanted.eg_text_customiser.common.text_override.tests.colour.predicates.ColourPredicate;
 import games.enchanted.eg_text_customiser.common.util.ResourceLocationUtil;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.ExtraCodecs;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -78,6 +79,35 @@ public class TextOverrideDefinition {
         return false;
     }
 
+    public Style applyToStyle(Style style) {
+        Style modifiedStyle = style;
+        if(replacement.colour != null) {
+            modifiedStyle = modifiedStyle.withColor(replacement.colour);
+        }
+        if(replacement.shadowColour != null) {
+            modifiedStyle = modifiedStyle.withShadowColor(replacement.shadowColour + 0xFF000000);
+        }
+        if(replacement.bold != null) {
+            modifiedStyle = modifiedStyle.withBold(replacement.bold);
+        }
+        if(replacement.italic != null) {
+            modifiedStyle = modifiedStyle.withItalic(replacement.italic);
+        }
+        if(replacement.underlined != null) {
+            modifiedStyle = modifiedStyle.withUnderlined(replacement.underlined);
+        }
+        if(replacement.strikethrough != null) {
+            modifiedStyle = modifiedStyle.withStrikethrough(replacement.strikethrough);
+        }
+        if(replacement.obfuscated != null) {
+            modifiedStyle = modifiedStyle.withObfuscated(replacement.obfuscated);
+        }
+        if(replacement.font != null) {
+            modifiedStyle = modifiedStyle.withFont(replacement.font);
+        }
+        return modifiedStyle;
+    }
+
     public record WhenPart(@Nullable ColourPredicate colour, @Nullable ColourPredicate shadowColour, @Nullable Boolean bold, @Nullable Boolean italic, @Nullable Boolean underlined, @Nullable Boolean strikethrough, @Nullable Boolean obfuscated, @Nullable ResourceLocation font) {
         private static final Codec<WhenPart> CODEC = RecordCodecBuilder.create((RecordCodecBuilder.Instance<WhenPart> instance) ->
             instance.group(
@@ -107,8 +137,8 @@ public class TextOverrideDefinition {
     public record ReplaceWithPart(@Nullable Integer colour, @Nullable Integer shadowColour, @Nullable Boolean bold, @Nullable Boolean italic, @Nullable Boolean underlined, @Nullable Boolean strikethrough, @Nullable Boolean obfuscated, @Nullable ResourceLocation font) {
         public static final Codec<ReplaceWithPart> CODEC = RecordCodecBuilder.create((RecordCodecBuilder.Instance<ReplaceWithPart> instance) ->
             instance.group(
-                ExtraCodecs.RGB_COLOR_CODEC.optionalFieldOf("color").forGetter((part) -> Optional.ofNullable(part.colour)),
-                ExtraCodecs.RGB_COLOR_CODEC.optionalFieldOf("shadow_color").forGetter(part -> Optional.ofNullable(part.shadowColour)),
+                ColourCodecs.RGB_HEX_CODEC.optionalFieldOf("color").forGetter((part) -> Optional.ofNullable(part.colour)),
+                ColourCodecs.RGB_HEX_CODEC.optionalFieldOf("shadow_color").forGetter(part -> Optional.ofNullable(part.shadowColour)),
                 Codec.BOOL.optionalFieldOf("bold").forGetter(part -> Optional.ofNullable(part.bold)),
                 Codec.BOOL.optionalFieldOf("italic").forGetter(part -> Optional.ofNullable(part.italic)),
                 Codec.BOOL.optionalFieldOf("underlined").forGetter(part -> Optional.ofNullable(part.underlined)),
