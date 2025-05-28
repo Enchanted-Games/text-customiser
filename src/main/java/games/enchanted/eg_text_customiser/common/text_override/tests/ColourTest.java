@@ -1,7 +1,7 @@
 package games.enchanted.eg_text_customiser.common.text_override.tests;
 
 import games.enchanted.eg_text_customiser.common.text_override.fake_style.SpecialTextColour;
-import games.enchanted.eg_text_customiser.common.text_override.tests.colour.ColourPredicate;
+import games.enchanted.eg_text_customiser.common.text_override.tests.colour.predicates.ColourPredicate;
 import org.jetbrains.annotations.Nullable;
 
 public class ColourTest implements PropertyTest<SpecialTextColour> {

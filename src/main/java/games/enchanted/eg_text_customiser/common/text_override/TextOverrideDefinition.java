@@ -7,8 +7,10 @@ import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import games.enchanted.eg_text_customiser.common.Logging;
 import games.enchanted.eg_text_customiser.common.text_override.fake_style.FakeStyle;
+import games.enchanted.eg_text_customiser.common.text_override.fake_style.SpecialTextColour;
+import games.enchanted.eg_text_customiser.common.text_override.tests.ColourTest;
 import games.enchanted.eg_text_customiser.common.text_override.tests.SimpleEqualityTest;
-import games.enchanted.eg_text_customiser.common.text_override.tests.colour.ColourPredicate;
+import games.enchanted.eg_text_customiser.common.text_override.tests.colour.predicates.ColourPredicate;
 import games.enchanted.eg_text_customiser.common.text_override.tests.colour.ColourPredicates;
 import games.enchanted.eg_text_customiser.common.text_override.tests.colour.predicates.BasicColourPredicate;
 import games.enchanted.eg_text_customiser.common.util.ResourceLocationUtil;
@@ -33,6 +35,8 @@ public class TextOverrideDefinition {
 
     final WhenPart whenPart;
     List<Function<FakeStyle, Boolean>> tests;
+    final ColourTest colourTester;
+    final ColourTest shadowColourTester;
     final SimpleEqualityTest<Boolean> boldTester;
     final SimpleEqualityTest<Boolean> italicTester;
     final SimpleEqualityTest<Boolean> underlinedTester;
@@ -43,12 +47,16 @@ public class TextOverrideDefinition {
 
     public TextOverrideDefinition(WhenPart whenPart, ReplaceWithPart replaceWithPart) {
         this.whenPart = whenPart;
+        this.colourTester = new ColourTest(whenPart.colour);
+        this.shadowColourTester = new ColourTest(whenPart.shadowColour);
         this.boldTester = new SimpleEqualityTest<>(whenPart.bold);
         this.italicTester = new SimpleEqualityTest<>(whenPart.italic);
         this.underlinedTester = new SimpleEqualityTest<>(whenPart.underlined);
         this.strikethroughTester = new SimpleEqualityTest<>(whenPart.strikethrough);
         this.obfuscatedTester = new SimpleEqualityTest<>(whenPart.obfuscated);
         tests = List.of(
+            (style) -> this.colourTester.matches(style.colour()),
+            (style) -> this.shadowColourTester.matches(style.shadowColour() == null ? null : new SpecialTextColour(style.shadowColour())),
             (style) -> this.boldTester.matches(style.bold()),
             (style) -> this.italicTester.matches(style.italic()),
             (style) -> this.underlinedTester.matches(style.underlined()),
@@ -70,11 +78,11 @@ public class TextOverrideDefinition {
         return false;
     }
 
-    public record WhenPart(@Nullable ColourPredicate colour, @Nullable Integer shadowColour, @Nullable Boolean bold, @Nullable Boolean italic, @Nullable Boolean underlined, @Nullable Boolean strikethrough, @Nullable Boolean obfuscated, @Nullable ResourceLocation font) {
+    public record WhenPart(@Nullable ColourPredicate colour, @Nullable ColourPredicate shadowColour, @Nullable Boolean bold, @Nullable Boolean italic, @Nullable Boolean underlined, @Nullable Boolean strikethrough, @Nullable Boolean obfuscated, @Nullable ResourceLocation font) {
         private static final Codec<WhenPart> CODEC = RecordCodecBuilder.create((RecordCodecBuilder.Instance<WhenPart> instance) ->
             instance.group(
                 ColourPredicates.CODEC.optionalFieldOf("color").forGetter((part) -> Optional.ofNullable(part.colour)),
-                ExtraCodecs.RGB_COLOR_CODEC.optionalFieldOf("shadow_color").forGetter(part -> Optional.ofNullable(part.shadowColour)),
+                ColourPredicates.CODEC.optionalFieldOf("shadow_color").forGetter(part -> Optional.ofNullable(part.shadowColour)),
                 Codec.BOOL.optionalFieldOf("bold").forGetter(part -> Optional.ofNullable(part.bold)),
                 Codec.BOOL.optionalFieldOf("italic").forGetter(part -> Optional.ofNullable(part.italic)),
                 Codec.BOOL.optionalFieldOf("underlined").forGetter(part -> Optional.ofNullable(part.underlined)),
@@ -82,7 +90,7 @@ public class TextOverrideDefinition {
                 Codec.BOOL.optionalFieldOf("obfuscated").forGetter(part -> Optional.ofNullable(part.obfuscated)),
                 ResourceLocation.CODEC.optionalFieldOf("font").forGetter(part -> Optional.ofNullable(part.font))
             ).apply(
-                instance, (Optional<ColourPredicate> colour, Optional<Integer> shadowColour, Optional<Boolean> bold, Optional<Boolean> italic, Optional<Boolean> underlined, Optional<Boolean> strikethrough, Optional<Boolean> obfuscated, Optional<ResourceLocation> font) -> new WhenPart(
+                instance, (Optional<ColourPredicate> colour, Optional<ColourPredicate> shadowColour, Optional<Boolean> bold, Optional<Boolean> italic, Optional<Boolean> underlined, Optional<Boolean> strikethrough, Optional<Boolean> obfuscated, Optional<ResourceLocation> font) -> new WhenPart(
                     colour.orElse(null),
                     shadowColour.orElse(null),
                     bold.orElse(null),
@@ -125,7 +133,7 @@ public class TextOverrideDefinition {
 
     public static void printExample() {
         DataResult<JsonElement> result = TextOverrideDefinition.CODEC.encodeStart(JsonOps.INSTANCE, new TextOverrideDefinition(
-            new TextOverrideDefinition.WhenPart(new BasicColourPredicate(-1), -1, false, false, false, false, false, ResourceLocationUtil.ofMod("placeholder")),
+            new TextOverrideDefinition.WhenPart(new BasicColourPredicate(new SpecialTextColour(-1)), new BasicColourPredicate(new SpecialTextColour(-1)), false, false, false, false, false, ResourceLocationUtil.ofMod("placeholder")),
             new TextOverrideDefinition.ReplaceWithPart(-1, -1, false, false, false, false, false, ResourceLocationUtil.ofMod("placeholder"))
         ));
         if(result.error().isPresent()) {

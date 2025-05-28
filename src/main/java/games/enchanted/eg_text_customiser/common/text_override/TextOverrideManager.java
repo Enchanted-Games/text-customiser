@@ -6,33 +6,42 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class TextOverrideManager {
     private static final Map<ResourceLocation, TextOverrideDefinition> TEXT_OVERRIDE_DEFINITIONS = new HashMap<>();
 
-    private static final Map<FakeStyle, ResourceLocation> STYLE_TO_TEXT_OVERRIDE_LOCATION = new HashMap<>();
     private static final Map<Style, FakeStyle> STYLE_CACHE = new HashMap<>();
+    private static final Set<FakeStyle> UNMATCHED_STYLES = new HashSet<>();
+    private static final Map<FakeStyle, TextOverrideDefinition> MATCHED_STYLES = new HashMap<>();
 
     public static boolean styleHasOverride(Style style) {
         FakeStyle fakeStyle = STYLE_CACHE.get(style);
         if(fakeStyle == null) {
-            Logging.info("Cached style: {}", style);
+            Logging.info("Cached stayle: {}", style);
             fakeStyle = FakeStyle.fromStyle(style);
             STYLE_CACHE.put(style, fakeStyle);
         }
 
-        ResourceLocation cachedDefinitionLocation = STYLE_TO_TEXT_OVERRIDE_LOCATION.get(fakeStyle);
-        if(cachedDefinitionLocation != null) {
-            return TEXT_OVERRIDE_DEFINITIONS.get(cachedDefinitionLocation).styleMatches(fakeStyle);
+        if(UNMATCHED_STYLES.contains(fakeStyle)) {
+            return false;
+        }
+
+        TextOverrideDefinition cachedDefinition = MATCHED_STYLES.get(fakeStyle);
+        if(cachedDefinition != null) {
+            return true;
         }
 
         for (Map.Entry<ResourceLocation, TextOverrideDefinition> entry : TEXT_OVERRIDE_DEFINITIONS.entrySet()) {
             boolean hasMatched = entry.getValue().styleMatches(fakeStyle);
-            // TODO: cache styles that have no override definition
-            if(!hasMatched) return false;
+            if(!hasMatched) {
+                UNMATCHED_STYLES.add(fakeStyle);
+                return false;
+            }
 
-            STYLE_TO_TEXT_OVERRIDE_LOCATION.put(fakeStyle, entry.getKey());
+            MATCHED_STYLES.put(fakeStyle, entry.getValue());
             return true;
         }
 

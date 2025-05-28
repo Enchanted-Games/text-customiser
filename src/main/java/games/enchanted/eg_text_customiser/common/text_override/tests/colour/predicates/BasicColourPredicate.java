@@ -4,33 +4,33 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import games.enchanted.eg_text_customiser.common.Logging;
 import games.enchanted.eg_text_customiser.common.serialization.ColourCodecs;
 import games.enchanted.eg_text_customiser.common.text_override.fake_style.SpecialTextColour;
-import games.enchanted.eg_text_customiser.common.text_override.tests.colour.ColourPredicate;
 
 public class BasicColourPredicate implements ColourPredicate {
-    public static final Codec<BasicColourPredicate> CODEC = ColourCodecs.COLOUR_CODEC.comapFlatMap(
-        input -> DataResult.success(new BasicColourPredicate(input)),
-        input -> input.colour
+    public static final Codec<BasicColourPredicate> CODEC = ColourCodecs.HEX_OR_NAMED_CODEC.comapFlatMap(
+        input -> DataResult.success(new BasicColourPredicate(SpecialTextColour.fromEither(input))),
+        input -> input.comparisonColour.getColourValueOrName()
     );
     public static final MapCodec<BasicColourPredicate> MAP_CODEC = RecordCodecBuilder.mapCodec(instance ->
         instance.group(
-            ColourCodecs.COLOUR_CODEC.fieldOf("value").forGetter(predicate -> predicate.colour)
+            ColourCodecs.HEX_OR_NAMED_CODEC.fieldOf("value").forGetter(predicate -> predicate.comparisonColour.getColourValueOrName())
         ).apply(
             instance,
-            BasicColourPredicate::new
+            (colourValueOrName) -> new BasicColourPredicate(SpecialTextColour.fromEither(colourValueOrName))
         )
     );
 
-    private final int colour;
+    private final SpecialTextColour comparisonColour;
 
-    public BasicColourPredicate(int colour) {
-        this.colour = colour;
+    public BasicColourPredicate(SpecialTextColour comparisonColour) {
+        this.comparisonColour = comparisonColour;
     }
 
     @Override
     public boolean colourMatches(SpecialTextColour colour) {
-        return false;
+        return colour.equals(comparisonColour);
     }
 
     @Override
