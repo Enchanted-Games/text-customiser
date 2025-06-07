@@ -1,4 +1,4 @@
-package games.enchanted.eg_text_customiser.common.text_override.tests;
+package games.enchanted.eg_text_customiser.common.pack.property_tests;
 
 import org.jetbrains.annotations.Nullable;
 

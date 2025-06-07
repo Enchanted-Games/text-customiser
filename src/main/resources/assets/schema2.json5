@@ -1,0 +1,13 @@
+{
+  "format": 0,
+  "replace_color": "named, or sign text object",
+  "replace_color___sign_text": {
+    "dye": "orange",
+    "glowing": true, // if the sign has glow ink applied
+    "is_glow_outline": true // if we are targeting the glowing text outline or base text (ignored if `glowing` if false)
+  },
+  "with": {
+    "color": "named or #ffffff",
+    "shadow_color": "same as colour if this is possible (only for non-sign text)"
+  }
+}

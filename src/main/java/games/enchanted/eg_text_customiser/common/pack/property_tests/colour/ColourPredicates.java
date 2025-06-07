@@ -1,10 +1,10 @@
-package games.enchanted.eg_text_customiser.common.text_override.tests.colour;
+package games.enchanted.eg_text_customiser.common.pack.property_tests.colour;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
-import games.enchanted.eg_text_customiser.common.text_override.tests.colour.predicates.BasicColourPredicate;
-import games.enchanted.eg_text_customiser.common.text_override.tests.colour.predicates.ColourPredicate;
-import games.enchanted.eg_text_customiser.common.text_override.tests.colour.predicates.SignDyeColourPredicate;
+import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.predicates.BasicColourPredicate;
+import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.predicates.ColourPredicate;
+import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.predicates.SignDyeColourPredicate;
 import games.enchanted.eg_text_customiser.common.util.ResourceLocationUtil;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;

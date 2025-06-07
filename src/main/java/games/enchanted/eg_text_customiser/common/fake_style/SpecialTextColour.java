@@ -1,4 +1,4 @@
-package games.enchanted.eg_text_customiser.common.text_override.fake_style;
+package games.enchanted.eg_text_customiser.common.fake_style;
 
 
 import com.mojang.datafixers.util.Either;
@@ -25,7 +25,7 @@ public class SpecialTextColour {
         this.isGlowingOutline = false;
     }
 
-    SpecialTextColour(String colourName) {
+    public SpecialTextColour(String colourName) {
         this.colourValueOrName = Either.right(colourName);
         this.isSignText = false;
         this.isGlowingSignText = false;

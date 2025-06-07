@@ -1,9 +1,9 @@
-package games.enchanted.eg_text_customiser.common.text_override.tests.colour.predicates;
+package games.enchanted.eg_text_customiser.common.pack.property_tests.colour.predicates;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import games.enchanted.eg_text_customiser.common.text_override.fake_style.SpecialTextColour;
+import games.enchanted.eg_text_customiser.common.fake_style.SpecialTextColour;
 import net.minecraft.world.item.DyeColor;
 
 public class SignDyeColourPredicate implements ColourPredicate {

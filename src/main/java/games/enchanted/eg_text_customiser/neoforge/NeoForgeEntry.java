@@ -2,7 +2,7 @@
 /*package games.enchanted.eg_text_customiser.neoforge;
 
 import games.enchanted.eg_text_customiser.common.ModEntry;
-import games.enchanted.eg_text_customiser.common.text_override.TextOverrideReloadListener;
+import games.enchanted.eg_text_customiser.common.pack.text_override.ColourOverrideReloadListener;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
@@ -16,7 +16,7 @@ public class NeoForgeEntry {
     public NeoForgeEntry(IEventBus bus) {
         ModEntry.init();
 
-        bus.addListener((AddClientReloadListenersEvent event) -> event.addListener(TextOverrideReloadListener.LOCATION, new TextOverrideReloadListener()));
+        bus.addListener((AddClientReloadListenersEvent event) -> event.addListener(ColourOverrideReloadListener.LOCATION, new ColourOverrideReloadListener()));
     }
 }
 *///?}

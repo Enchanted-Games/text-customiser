@@ -1,7 +1,7 @@
-package games.enchanted.eg_text_customiser.common.text_override.tests.colour.predicates;
+package games.enchanted.eg_text_customiser.common.pack.property_tests.colour.predicates;
 
 import com.mojang.serialization.MapCodec;
-import games.enchanted.eg_text_customiser.common.text_override.fake_style.SpecialTextColour;
+import games.enchanted.eg_text_customiser.common.fake_style.SpecialTextColour;
 
 public interface ColourPredicate {
     boolean colourMatches(SpecialTextColour colour);

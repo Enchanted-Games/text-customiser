@@ -1,4 +1,4 @@
-package games.enchanted.eg_text_customiser.common.text_override;
+package games.enchanted.eg_text_customiser.common.pack.style_override;
 
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
@@ -7,13 +7,13 @@ import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import games.enchanted.eg_text_customiser.common.Logging;
 import games.enchanted.eg_text_customiser.common.serialization.ColourCodecs;
-import games.enchanted.eg_text_customiser.common.text_override.fake_style.FakeStyle;
-import games.enchanted.eg_text_customiser.common.text_override.fake_style.SpecialTextColour;
-import games.enchanted.eg_text_customiser.common.text_override.tests.ColourTest;
-import games.enchanted.eg_text_customiser.common.text_override.tests.SimpleEqualityTest;
-import games.enchanted.eg_text_customiser.common.text_override.tests.colour.ColourPredicates;
-import games.enchanted.eg_text_customiser.common.text_override.tests.colour.predicates.BasicColourPredicate;
-import games.enchanted.eg_text_customiser.common.text_override.tests.colour.predicates.ColourPredicate;
+import games.enchanted.eg_text_customiser.common.fake_style.FakeStyle;
+import games.enchanted.eg_text_customiser.common.fake_style.SpecialTextColour;
+import games.enchanted.eg_text_customiser.common.pack.property_tests.ColourTest;
+import games.enchanted.eg_text_customiser.common.pack.property_tests.SimpleEqualityTest;
+import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.ColourPredicates;
+import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.predicates.BasicColourPredicate;
+import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.predicates.ColourPredicate;
 import games.enchanted.eg_text_customiser.common.util.ResourceLocationUtil;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
@@ -23,14 +23,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class TextOverrideDefinition {
-    public static final Codec<TextOverrideDefinition> CODEC = RecordCodecBuilder.create((RecordCodecBuilder.Instance<TextOverrideDefinition> instance) ->
+public class StyleOverrideDefinition {
+    public static final Codec<StyleOverrideDefinition> CODEC = RecordCodecBuilder.create((RecordCodecBuilder.Instance<StyleOverrideDefinition> instance) ->
         instance.group(
             WhenPart.CODEC.fieldOf("when").forGetter((override) -> override.whenPart),
             ReplaceWithPart.CODEC.fieldOf("replace_with").forGetter((override) -> override.replacement)
         ).apply(
             instance,
-            TextOverrideDefinition::new
+            StyleOverrideDefinition::new
         )
     );
 
@@ -46,7 +46,7 @@ public class TextOverrideDefinition {
 
     final ReplaceWithPart replacement;
 
-    public TextOverrideDefinition(WhenPart whenPart, ReplaceWithPart replaceWithPart) {
+    public StyleOverrideDefinition(WhenPart whenPart, ReplaceWithPart replaceWithPart) {
         this.whenPart = whenPart;
         this.colourTester = new ColourTest(whenPart.colour);
         this.shadowColourTester = new ColourTest(whenPart.shadowColour);
@@ -162,9 +162,9 @@ public class TextOverrideDefinition {
     }
 
     public static void printExample() {
-        DataResult<JsonElement> result = TextOverrideDefinition.CODEC.encodeStart(JsonOps.INSTANCE, new TextOverrideDefinition(
-            new TextOverrideDefinition.WhenPart(new BasicColourPredicate(new SpecialTextColour(-1)), new BasicColourPredicate(new SpecialTextColour(-1)), false, false, false, false, false, ResourceLocationUtil.ofMod("placeholder")),
-            new TextOverrideDefinition.ReplaceWithPart(-1, -1, false, false, false, false, false, ResourceLocationUtil.ofMod("placeholder"))
+        DataResult<JsonElement> result = StyleOverrideDefinition.CODEC.encodeStart(JsonOps.INSTANCE, new StyleOverrideDefinition(
+            new StyleOverrideDefinition.WhenPart(new BasicColourPredicate(new SpecialTextColour(-1)), new BasicColourPredicate(new SpecialTextColour(-1)), false, false, false, false, false, ResourceLocationUtil.ofMod("placeholder")),
+            new StyleOverrideDefinition.ReplaceWithPart(-1, -1, false, false, false, false, false, ResourceLocationUtil.ofMod("placeholder"))
         ));
         if(result.error().isPresent()) {
             throw new RuntimeException(result.error().get().message());

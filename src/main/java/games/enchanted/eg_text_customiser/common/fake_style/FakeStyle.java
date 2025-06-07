@@ -1,6 +1,5 @@
-package games.enchanted.eg_text_customiser.common.text_override.fake_style;
+package games.enchanted.eg_text_customiser.common.fake_style;
 
-import games.enchanted.eg_text_customiser.common.duck.StyleAddedFields;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
@@ -20,12 +19,7 @@ public record FakeStyle(
 ) {
     public static FakeStyle fromStyle(Style style) {
         SpecialTextColour specialTextColour;
-        @Nullable Integer comparisonColour = ((StyleAddedFields) style).eg_text_customiser$getComparisonColour();
-        if(comparisonColour == null) {
-            specialTextColour = SpecialTextColour.fromTextColor(style.getColor());
-        } else {
-            specialTextColour = new SpecialTextColour(comparisonColour);
-        }
+        specialTextColour = SpecialTextColour.fromTextColor(style.getColor());
         return new FakeStyle(
             specialTextColour,
             style.getShadowColor(),
@@ -42,31 +36,31 @@ public record FakeStyle(
         return new FakeStyle(SpecialTextColour.fromSignText(signText, isGlowingOutline), null, null, null, null, null, null, null);
     }
 
-    public TextColor getAsTextColor(TextColor fallback) {
+    public TextColor getColourAsTextColor(TextColor fallback) {
         return (colour == null || colour.getColourValueOrName().left().orElse(0) == -1) ? fallback : colour.toTextColor();
     }
 
-    public @NotNull Boolean bold(Boolean fallback) {
+    public @NotNull Boolean getBoldSafe(Boolean fallback) {
         return bold == null ? fallback : bold;
     }
 
-    public @NotNull Boolean italic(Boolean fallback) {
+    public @NotNull Boolean getItalicSafe(Boolean fallback) {
         return italic == null ? fallback : italic;
     }
 
-    public @NotNull Boolean underlined(Boolean fallback) {
+    public @NotNull Boolean getUnderlinedSafe(Boolean fallback) {
         return underlined == null ? fallback : underlined;
     }
 
-    public @NotNull Boolean strikethrough(Boolean fallback) {
+    public @NotNull Boolean getStrikethroughSafe(Boolean fallback) {
         return strikethrough == null ? fallback : strikethrough;
     }
 
-    public @NotNull Boolean obfuscated(Boolean fallback) {
+    public @NotNull Boolean getObfuscatedSafe(Boolean fallback) {
         return obfuscated == null ? fallback : obfuscated;
     }
 
-    public @NotNull ResourceLocation font(ResourceLocation fallback) {
+    public @NotNull ResourceLocation getFontSafe(ResourceLocation fallback) {
         return font == null ? fallback : font;
     }
 }

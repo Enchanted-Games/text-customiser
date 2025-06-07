@@ -3,7 +3,7 @@ package games.enchanted.eg_text_customiser.common.serialization;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.EitherCodec;
-import games.enchanted.eg_text_customiser.common.text_override.fake_style.SpecialTextColour;
+import games.enchanted.eg_text_customiser.common.fake_style.SpecialTextColour;
 import net.minecraft.ChatFormatting;
 
 import java.util.Locale;
@@ -12,7 +12,6 @@ import java.util.Objects;
 public class ColourCodecs {
     public static Codec<Integer> RGB_HEX_CODEC = Codec.STRING.comapFlatMap(
         input -> {
-            // TODO: better error messages
             if(!input.startsWith("#")) {
                 return DataResult.error(() -> "Invalid colour! Must start with a `#` or be a named colour. Value '" + input + "' not valid");
             }
