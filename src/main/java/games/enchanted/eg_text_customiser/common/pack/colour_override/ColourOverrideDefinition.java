@@ -12,6 +12,7 @@ import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.pred
 import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.predicates.ColourPredicate;
 import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.predicates.SignDyeColourPredicate;
 import games.enchanted.eg_text_customiser.common.pack.style_override.StyleOverrideDefinition;
+import net.minecraft.network.chat.Style;
 
 public class ColourOverrideDefinition {
     public static final Codec<ColourPredicate> SIMPLE_OR_SIGN_COLOUR_CODEC = Codec.withAlternative(
@@ -40,6 +41,10 @@ public class ColourOverrideDefinition {
 
     public boolean styleMatches(FakeStyle style) {
         return colourPredicate.colourMatches(style.colour());
+    }
+
+    public Style applyToStyleIfMatching(Style style) {
+        return Style.EMPTY.withColor(0xff00ff);
     }
 
     public static void printExample() {
