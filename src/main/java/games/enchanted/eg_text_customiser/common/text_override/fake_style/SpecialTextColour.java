@@ -3,6 +3,7 @@ package games.enchanted.eg_text_customiser.common.text_override.fake_style;
 
 import com.mojang.datafixers.util.Either;
 import games.enchanted.eg_text_customiser.common.mixin.accessor.TextColorAccess;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.level.block.entity.SignText;
 import org.jetbrains.annotations.Nullable;
@@ -47,6 +48,15 @@ public class SpecialTextColour {
             return new SpecialTextColour(textNamedColour);
         }
         return new SpecialTextColour(textColor.getValue());
+    }
+
+    public TextColor toTextColor() {
+        if(colourValueOrName.left().isPresent()) {
+            return TextColor.fromRgb(colourValueOrName.left().get());
+        } else if(colourValueOrName.right().isEmpty()) {
+            throw new IllegalStateException("Either passed with no right or left value");
+        }
+        return TextColor.fromLegacyFormat(ChatFormatting.getByName(colourValueOrName.right().get()));
     }
 
     public static SpecialTextColour fromSignText(SignText signText, boolean isGlowingOutline) {

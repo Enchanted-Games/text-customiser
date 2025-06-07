@@ -15,9 +15,12 @@ public class TextOverrideManager {
 
     private static final Map<Style, FakeStyle> STYLE_CACHE = new HashMap<>();
     private static final Set<FakeStyle> UNMATCHED_STYLES = new HashSet<>();
-    private static final Map<FakeStyle, Style> MATCHED_STYLES = new HashMap<>();
+    private static final Map<FakeStyle, Style> MATCHED_STYLES_fake_to_real = new HashMap<>();
+    private static final Map<Style, FakeStyle> MATCHED_STYLES = new HashMap<>();
 
     public static Style applyStyleOverride(Style originalStyle) {
+//        if(originalStyle.isEmpty()) return originalStyle;
+
         FakeStyle fakeStyle = STYLE_CACHE.get(originalStyle);
         if(fakeStyle == null) {
             Logging.info("Cached style: {}", originalStyle);
@@ -29,7 +32,7 @@ public class TextOverrideManager {
             return originalStyle;
         }
 
-        Style cachedStyle = MATCHED_STYLES.get(fakeStyle);
+        Style cachedStyle = MATCHED_STYLES_fake_to_real.get(fakeStyle);
         if(cachedStyle != null) {
             return cachedStyle;
         }
@@ -42,11 +45,43 @@ public class TextOverrideManager {
             }
 
             Style modifiedStyle = entry.getValue().applyToStyle(originalStyle);
-            MATCHED_STYLES.put(fakeStyle, modifiedStyle);
+            MATCHED_STYLES_fake_to_real.put(fakeStyle, modifiedStyle);
             return modifiedStyle;
         }
 
         return originalStyle;
+    }
+
+    public static FakeStyle getOverrideForStyle(Style originalStyle) {
+        FakeStyle fakeStyle = STYLE_CACHE.get(originalStyle);
+        if(fakeStyle == null) {
+            Logging.info("Cached style: {}", originalStyle);
+            fakeStyle = FakeStyle.fromStyle(originalStyle);
+            STYLE_CACHE.put(originalStyle, fakeStyle);
+        }
+
+        if(UNMATCHED_STYLES.contains(fakeStyle)) {
+            return fakeStyle;
+        }
+
+        FakeStyle cachedStyle = MATCHED_STYLES.get(originalStyle);
+        if(cachedStyle != null) {
+            return cachedStyle;
+        }
+
+        for (Map.Entry<ResourceLocation, TextOverrideDefinition> entry : TEXT_OVERRIDE_DEFINITIONS.entrySet()) {
+            boolean hasMatched = entry.getValue().styleMatches(fakeStyle);
+            if(!hasMatched) {
+                UNMATCHED_STYLES.add(fakeStyle);
+                return fakeStyle;
+            }
+
+            FakeStyle modifiedStyle = FakeStyle.fromStyle(entry.getValue().applyToStyle(originalStyle));
+            MATCHED_STYLES.put(originalStyle, modifiedStyle);
+            return fakeStyle;
+        }
+
+        return fakeStyle;
     }
 
     public static void registerOverride(ResourceLocation location, TextOverrideDefinition definition) {
@@ -58,5 +93,6 @@ public class TextOverrideManager {
         STYLE_CACHE.clear();
         UNMATCHED_STYLES.clear();
         MATCHED_STYLES.clear();
+        MATCHED_STYLES_fake_to_real.clear();
     }
 }

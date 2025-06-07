@@ -4,11 +4,8 @@
   "package": "games.enchanted.eg_text_customiser.common.mixin",
   "compatibilityLevel": "JAVA_${java_ver}",
   "mixins": [
-    "accessor.TextColorAccess"
   ],
   "client": [
-    "Font_StringRenderOutputMixin",
-    "FontMixin"
   ],
   "injectors": {
     "defaultRequire": 1
