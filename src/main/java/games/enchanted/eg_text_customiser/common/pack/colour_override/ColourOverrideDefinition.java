@@ -8,17 +8,14 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import games.enchanted.eg_text_customiser.common.Logging;
 import games.enchanted.eg_text_customiser.common.fake_style.FakeStyle;
 import games.enchanted.eg_text_customiser.common.fake_style.SpecialTextColour;
+import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.ColourPredicates;
 import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.predicates.BasicColourPredicate;
 import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.predicates.ColourPredicate;
-import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.predicates.SignDyeColourPredicate;
 import games.enchanted.eg_text_customiser.common.pack.style_override.StyleOverrideDefinition;
 import net.minecraft.network.chat.Style;
 
 public class ColourOverrideDefinition {
-    public static final Codec<ColourPredicate> SIMPLE_OR_SIGN_COLOUR_CODEC = Codec.withAlternative(
-        (Codec<ColourPredicate>) BasicColourPredicate.NAMED_ONLY_CODEC,
-        SignDyeColourPredicate.MAP_CODEC.codec(), signDyeColourPredicate -> signDyeColourPredicate
-    );
+    public static final Codec<ColourPredicate> SIMPLE_OR_SIGN_COLOUR_CODEC = ColourPredicates.CODEC;
 
     public static final Codec<ColourOverrideDefinition> CODEC = RecordCodecBuilder.create((RecordCodecBuilder.Instance<ColourOverrideDefinition> instance) ->
         instance.group(
@@ -45,6 +42,9 @@ public class ColourOverrideDefinition {
 
     public Style applyToStyleIfMatching(Style style) {
         return Style.EMPTY.withColor(0xff00ff);
+    }
+    public FakeStyle applyToStyleIfMatching(FakeStyle style) {
+        return new FakeStyle(new SpecialTextColour(0xff00ff), style.shadowColour(), style.bold(), style.italic(), style.underlined(), style.strikethrough(), style.obfuscated(), style.font());
     }
 
     public static void printExample() {

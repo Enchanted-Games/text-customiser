@@ -6,30 +6,56 @@ import games.enchanted.eg_text_customiser.common.pack.style_override.StyleOverri
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.NotImplementedException;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 public class TextOverrideManager {
     private static final Map<ResourceLocation, ColourOverrideDefinition> COLOUR_OVERRIDE_DEFINITIONS = new HashMap<>();
 
-    private static final Map<FakeStyle, ColourOverrideDefinition> MATCHING_STYLES = new HashMap<>();
+    private static final Map<FakeStyle, ColourOverrideDefinition> MATCHED_STYLES = new HashMap<>();
+    private static final HashSet<FakeStyle> UNMATCHED_STYLED = new HashSet<>();
 
-    public static Style applyColourOverride(Style originalStyle) {
+    private static @Nullable ColourOverrideDefinition getDefinitionForStyle(FakeStyle style) {
+        if(UNMATCHED_STYLED.contains(style)) {
+            return null;
+        }
+        for (Map.Entry<ResourceLocation, ColourOverrideDefinition> entry : COLOUR_OVERRIDE_DEFINITIONS.entrySet()) {
+            boolean match = entry.getValue().styleMatches(style);
+            if(!match) continue;
+            MATCHED_STYLES.put(style, entry.getValue());
+            return entry.getValue();
+        }
+        UNMATCHED_STYLED.add(style);
+        return null;
+    }
+
+    public static synchronized FakeStyle applyFakeColourOverride(FakeStyle originalStyle) {
+        if(MATCHED_STYLES.containsKey(originalStyle)) {
+            return MATCHED_STYLES.get(originalStyle).applyToStyleIfMatching(originalStyle);
+        }
+
+        ColourOverrideDefinition overrideDefinition = getDefinitionForStyle(originalStyle);
+        if(overrideDefinition == null) {
+            return originalStyle;
+        }
+        return overrideDefinition.applyToStyleIfMatching(originalStyle);
+    }
+
+    public static synchronized Style applyColourOverride(Style originalStyle) {
         FakeStyle fakeStyle = FakeStyle.fromStyle(originalStyle);
 
-        if(MATCHING_STYLES.containsKey(fakeStyle)) {
-            return MATCHING_STYLES.get(fakeStyle).applyToStyleIfMatching(originalStyle);
+        if(MATCHED_STYLES.containsKey(fakeStyle)) {
+            return MATCHED_STYLES.get(fakeStyle).applyToStyleIfMatching(originalStyle);
         }
 
-        for (Map.Entry<ResourceLocation, ColourOverrideDefinition> entry : COLOUR_OVERRIDE_DEFINITIONS.entrySet()) {
-            boolean match = entry.getValue().styleMatches(fakeStyle);
-            if(!match) continue;
-            MATCHING_STYLES.put(fakeStyle, entry.getValue());
-            return entry.getValue().applyToStyleIfMatching(originalStyle);
+        ColourOverrideDefinition overrideDefinition = getDefinitionForStyle(fakeStyle);
+        if(overrideDefinition == null) {
+            return originalStyle;
         }
-
-        return originalStyle;
+        return overrideDefinition.applyToStyleIfMatching(originalStyle);
     }
 
     public static void registerOverride(ResourceLocation location, StyleOverrideDefinition definition) {
@@ -41,6 +67,7 @@ public class TextOverrideManager {
 
     public static void clearCaches() {
         COLOUR_OVERRIDE_DEFINITIONS.clear();
-        MATCHING_STYLES.clear();
+        MATCHED_STYLES.clear();
+        UNMATCHED_STYLED.clear();
     }
 }

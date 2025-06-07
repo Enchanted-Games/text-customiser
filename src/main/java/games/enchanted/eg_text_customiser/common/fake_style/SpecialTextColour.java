@@ -11,8 +11,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 public class SpecialTextColour {
-    public static final String DEFAULT_COLOUR_NAME = "eg_text_customiser:default";
-
     private final Either<Integer, String> colourValueOrName;
     private final boolean isSignText;
     private final boolean isGlowingSignText;
@@ -69,15 +67,26 @@ public class SpecialTextColour {
         } else if(either.right().isEmpty()) {
             throw new IllegalStateException("Either passed with no right or left value");
         }
-        String colourName = either.right().get();
-        if(colourName.equals(DEFAULT_COLOUR_NAME)) {
-            return new SpecialTextColour(-1);
-        }
-        return new SpecialTextColour(colourName);
+        return new SpecialTextColour(either.right().get());
     }
 
     public Either<Integer, String> getColourValueOrName() {
         return colourValueOrName;
+    }
+
+    public int safeGetAsRGB() {
+        if(colourValueOrName.left().isPresent()) {
+            return colourValueOrName.left().get();
+        } else if(colourValueOrName.right().isEmpty()) {
+            throw new IllegalStateException("Either has no right or left value");
+        }
+        ChatFormatting formatting = ChatFormatting.getByName(colourValueOrName.right().get());
+        Integer intRGB;
+        if(formatting != null && formatting.isColor() && formatting.getColor() != null) {
+            return formatting.getColor();
+        } else {
+            throw new IllegalStateException("Expected a colour chat formatting, got '" + formatting + "' instead.");
+        }
     }
 
     @Override
