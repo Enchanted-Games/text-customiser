@@ -8,12 +8,6 @@ import games.enchanted.eg_text_customiser.common.serialization.ColourCodecs;
 import games.enchanted.eg_text_customiser.common.fake_style.SpecialTextColour;
 
 public class BasicColourPredicate implements ColourPredicate {
-    public static final Codec<? extends ColourPredicate> NAMED_ONLY_CODEC = ColourCodecs.NAMED_COLOUR_CODEC.comapFlatMap(
-        input -> DataResult.success(new BasicColourPredicate(new SpecialTextColour(input))),
-        input -> input.comparisonColour.getColourValueOrName().right().orElseThrow(
-            () -> new IllegalArgumentException("Invalid value '" + input.comparisonColour.getColourValueOrName() + "', must be a named colour.")
-        )
-    );
     public static final Codec<? extends ColourPredicate> CODEC = ColourCodecs.HEX_OR_NAMED_CODEC.comapFlatMap(
         input -> DataResult.success(new BasicColourPredicate(SpecialTextColour.fromEither(input))),
         input -> input.comparisonColour.getColourValueOrName()

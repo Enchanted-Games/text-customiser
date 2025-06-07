@@ -24,18 +24,19 @@ public class TextOverrideManager {
         }
         for (Map.Entry<ResourceLocation, ColourOverrideDefinition> entry : COLOUR_OVERRIDE_DEFINITIONS.entrySet()) {
             boolean match = entry.getValue().styleMatches(style);
-            if(!match) continue;
-            MATCHED_STYLES.put(style, entry.getValue());
-            return entry.getValue();
+            if(match) {
+                MATCHED_STYLES.put(style, entry.getValue());
+                return entry.getValue();
+            }
         }
         UNMATCHED_STYLED.add(style);
         return null;
     }
 
     public static synchronized FakeStyle applyFakeColourOverride(FakeStyle originalStyle) {
-        if(MATCHED_STYLES.containsKey(originalStyle)) {
-            return MATCHED_STYLES.get(originalStyle).applyToStyleIfMatching(originalStyle);
-        }
+//        if(MATCHED_STYLES.containsKey(originalStyle)) {
+//            return MATCHED_STYLES.get(originalStyle).applyToStyleIfMatching(originalStyle);
+//        }
 
         ColourOverrideDefinition overrideDefinition = getDefinitionForStyle(originalStyle);
         if(overrideDefinition == null) {
@@ -47,9 +48,9 @@ public class TextOverrideManager {
     public static synchronized Style applyColourOverride(Style originalStyle) {
         FakeStyle fakeStyle = FakeStyle.fromStyle(originalStyle);
 
-        if(MATCHED_STYLES.containsKey(fakeStyle)) {
-            return MATCHED_STYLES.get(fakeStyle).applyToStyleIfMatching(originalStyle);
-        }
+//        if(MATCHED_STYLES.containsKey(fakeStyle)) {
+//            return MATCHED_STYLES.get(fakeStyle).applyToStyleIfMatching(originalStyle);
+//        }
 
         ColourOverrideDefinition overrideDefinition = getDefinitionForStyle(fakeStyle);
         if(overrideDefinition == null) {

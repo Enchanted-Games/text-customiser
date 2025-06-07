@@ -11,8 +11,11 @@ import games.enchanted.eg_text_customiser.common.fake_style.SpecialTextColour;
 import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.ColourPredicates;
 import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.predicates.BasicColourPredicate;
 import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.predicates.ColourPredicate;
-import games.enchanted.eg_text_customiser.common.pack.style_override.StyleOverrideDefinition;
+import games.enchanted.eg_text_customiser.common.serialization.ColourCodecs;
 import net.minecraft.network.chat.Style;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public class ColourOverrideDefinition {
     public static final Codec<ColourPredicate> SIMPLE_OR_SIGN_COLOUR_CODEC = ColourPredicates.CODEC;
@@ -20,7 +23,7 @@ public class ColourOverrideDefinition {
     public static final Codec<ColourOverrideDefinition> CODEC = RecordCodecBuilder.create((RecordCodecBuilder.Instance<ColourOverrideDefinition> instance) ->
         instance.group(
             SIMPLE_OR_SIGN_COLOUR_CODEC.fieldOf("replace_color").forGetter((override) -> override.colourPredicate),
-            StyleOverrideDefinition.ReplaceWithPart.CODEC.fieldOf("with").forGetter((override) -> override.replacement)
+            ColourOverrideDefinition.ReplaceWithPart.CODEC.fieldOf("with").forGetter((override) -> override.replacement)
         ).apply(
             instance,
             ColourOverrideDefinition::new
@@ -28,9 +31,9 @@ public class ColourOverrideDefinition {
     );
 
     final ColourPredicate colourPredicate;
-    final StyleOverrideDefinition.ReplaceWithPart replacement;
+    final ColourOverrideDefinition.ReplaceWithPart replacement;
 
-    public ColourOverrideDefinition(ColourPredicate colourPredicate, StyleOverrideDefinition.ReplaceWithPart replaceWithPart) {
+    public ColourOverrideDefinition(ColourPredicate colourPredicate, ColourOverrideDefinition.ReplaceWithPart replaceWithPart) {
         this.colourPredicate = colourPredicate;
 
         this.replacement = replaceWithPart;
@@ -41,21 +44,53 @@ public class ColourOverrideDefinition {
     }
 
     public Style applyToStyleIfMatching(Style style) {
-        return Style.EMPTY.withColor(0xff00ff);
+        Style modifiedStyle = style;
+        if(replacement.colour != null) {
+            modifiedStyle = modifiedStyle.withColor(replacement.colour);
+        }
+        if(replacement.shadowColour != null) {
+            modifiedStyle = modifiedStyle.withShadowColor(replacement.shadowColour + 0xff000000);
+        }
+        return modifiedStyle;
     }
+
     public FakeStyle applyToStyleIfMatching(FakeStyle style) {
-        return new FakeStyle(new SpecialTextColour(0xff00ff), style.shadowColour(), style.bold(), style.italic(), style.underlined(), style.strikethrough(), style.obfuscated(), style.font());
+        return new FakeStyle(
+            replacement.colour == null ? style.colour() : new SpecialTextColour(replacement.colour),
+            replacement.shadowColour == null ? style.shadowColour() : replacement.shadowColour,
+            style.bold(),
+            style.italic(),
+            style.underlined(),
+            style.strikethrough(),
+            style.obfuscated(),
+            style.font()
+        );
     }
 
     public static void printExample() {
         DataResult<JsonElement> result = ColourOverrideDefinition.CODEC.encodeStart(JsonOps.INSTANCE, new ColourOverrideDefinition(
             new BasicColourPredicate(new SpecialTextColour("red")),
-            new StyleOverrideDefinition.ReplaceWithPart(0xffffff, 0x777777, null, null, null, null, null, null)
+            new ReplaceWithPart(0xffffff, 0x777777)
         ));
         if(result.error().isPresent()) {
             throw new RuntimeException(result.error().get().message());
         }
 
         Logging.info("Example file: {}", result.getOrThrow().toString());
+    }
+
+    public record ReplaceWithPart(@Nullable Integer colour, @Nullable Integer shadowColour) {
+        public static final Codec<ReplaceWithPart> CODEC = RecordCodecBuilder.create((RecordCodecBuilder.Instance<ReplaceWithPart> instance) ->
+            instance.group(
+                    ColourCodecs.RGB_HEX_CODEC.optionalFieldOf("color").forGetter((part) -> Optional.ofNullable(part.colour)),
+                    ColourCodecs.RGB_HEX_CODEC.optionalFieldOf("shadow_color").forGetter(part -> Optional.ofNullable(part.shadowColour))
+                )
+                .apply(
+                    instance, (Optional<Integer> colour, Optional<Integer> shadowColour) -> new ReplaceWithPart(
+                        colour.orElse(null),
+                        shadowColour.orElse(null)
+                    )
+                )
+        );
     }
 }

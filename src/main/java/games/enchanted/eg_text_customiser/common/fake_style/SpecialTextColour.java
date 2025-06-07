@@ -11,12 +11,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 public class SpecialTextColour {
+    private static final int WHITE = 0xffffff;
+
     private final Either<Integer, String> colourValueOrName;
     private final boolean isSignText;
     private final boolean isGlowingSignText;
     private final boolean isGlowingOutline;
 
     public SpecialTextColour(int rgb) {
+        if(rgb == -1) rgb = WHITE;
         this.colourValueOrName = Either.left(rgb);
         this.isSignText = false;
         this.isGlowingSignText = false;
@@ -39,7 +42,7 @@ public class SpecialTextColour {
 
     public static SpecialTextColour fromTextColor(@Nullable TextColor textColor) {
         if(textColor == null) {
-            return new SpecialTextColour(-1);
+            return new SpecialTextColour(WHITE);
         }
         String textNamedColour = ((TextColorAccess) (Object) textColor).eg_text_customiser$getName();
         if(textNamedColour != null) {
