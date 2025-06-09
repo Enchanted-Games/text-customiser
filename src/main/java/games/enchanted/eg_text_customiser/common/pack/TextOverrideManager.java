@@ -34,9 +34,9 @@ public class TextOverrideManager {
     }
 
     public static synchronized FakeStyle applyFakeColourOverride(FakeStyle originalStyle) {
-//        if(MATCHED_STYLES.containsKey(originalStyle)) {
-//            return MATCHED_STYLES.get(originalStyle).applyToStyleIfMatching(originalStyle);
-//        }
+        if(MATCHED_STYLES.containsKey(originalStyle)) {
+            return MATCHED_STYLES.get(originalStyle).applyToStyleIfMatching(originalStyle);
+        }
 
         ColourOverrideDefinition overrideDefinition = getDefinitionForStyle(originalStyle);
         if(overrideDefinition == null) {
@@ -48,9 +48,9 @@ public class TextOverrideManager {
     public static synchronized Style applyColourOverride(Style originalStyle) {
         FakeStyle fakeStyle = FakeStyle.fromStyle(originalStyle);
 
-//        if(MATCHED_STYLES.containsKey(fakeStyle)) {
-//            return MATCHED_STYLES.get(fakeStyle).applyToStyleIfMatching(originalStyle);
-//        }
+        if(MATCHED_STYLES.containsKey(fakeStyle)) {
+            return MATCHED_STYLES.get(fakeStyle).applyToStyleIfMatching(originalStyle);
+        }
 
         ColourOverrideDefinition overrideDefinition = getDefinitionForStyle(fakeStyle);
         if(overrideDefinition == null) {

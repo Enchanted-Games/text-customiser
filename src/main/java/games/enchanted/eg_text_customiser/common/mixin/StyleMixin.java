@@ -1,21 +1,18 @@
 package games.enchanted.eg_text_customiser.common.mixin;
 
-import games.enchanted.eg_text_customiser.common.duck.StyleShadowReset;
+import games.enchanted.eg_text_customiser.common.duck.StyleAdditions;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Mutable;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.*;
 
 import java.util.Optional;
 
 @Mixin(Style.class)
-public abstract class StyleMixin implements StyleShadowReset {
+public abstract class StyleMixin implements StyleAdditions {
     @Shadow
     private static <T> Style checkEmptyAfterChange(Style style, T oldValue, T newValue) {
         return null;
@@ -40,6 +37,6 @@ public abstract class StyleMixin implements StyleShadowReset {
 
     @Override
     public Style eg_text_customiser$resetShadowColour() {
-        return checkEmptyAfterChange(create(Optional.ofNullable(this.color), Optional.ofNullable(null), Optional.ofNullable(this.bold), Optional.ofNullable(this.italic), Optional.ofNullable(this.underlined), Optional.ofNullable(this.strikethrough), Optional.ofNullable(this.obfuscated), Optional.ofNullable(this.clickEvent), Optional.ofNullable(this.hoverEvent), Optional.ofNullable(this.insertion), Optional.ofNullable(this.font)), this.shadowColor, null);
+        return checkEmptyAfterChange(create(Optional.ofNullable(this.color), Optional.empty(), Optional.ofNullable(this.bold), Optional.ofNullable(this.italic), Optional.ofNullable(this.underlined), Optional.ofNullable(this.strikethrough), Optional.ofNullable(this.obfuscated), Optional.ofNullable(this.clickEvent), Optional.ofNullable(this.hoverEvent), Optional.ofNullable(this.insertion), Optional.ofNullable(this.font)), this.shadowColor, null);
     }
 }
