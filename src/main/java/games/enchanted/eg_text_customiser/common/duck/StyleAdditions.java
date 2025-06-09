@@ -16,4 +16,8 @@ public interface StyleAdditions {
 
     boolean eg_text_customiser$hasBeenOverridden();
     void eg_text_customiser$setHasBeenOverridden(boolean newValue);
+
+    Style eg_text_customiser$setIsSign();
+    boolean eg_text_customiser$isSign();
+    void eg_text_customiser$setIsSign(boolean newValue);
 }

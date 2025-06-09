@@ -3,6 +3,7 @@ package games.enchanted.eg_text_customiser.common.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import games.enchanted.eg_text_customiser.common.duck.StyleAdditions;
+import games.enchanted.eg_text_customiser.common.mixin.accessor.StyleInvoker;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
@@ -19,6 +20,7 @@ import java.util.Optional;
 public abstract class StyleMixin implements StyleAdditions {
     @Unique private boolean eg_text_customiser$inheritShadowColour = true;
     @Unique private boolean eg_text_customiser$hasBeenOverridden = false;
+    @Unique private boolean eg_text_customiser$isSign = false;
 
     @Shadow
     private static <T> Style checkEmptyAfterChange(Style style, T oldValue, T newValue) {
@@ -27,7 +29,7 @@ public abstract class StyleMixin implements StyleAdditions {
 
     @Shadow
     private static Style create(Optional<TextColor> par1, Optional<Integer> par2, Optional<Boolean> par3, Optional<Boolean> par4, Optional<Boolean> par5, Optional<Boolean> par6, Optional<Boolean> par7, Optional<ClickEvent> par8, Optional<HoverEvent> par9, Optional<String> par10, Optional<ResourceLocation> par11) {
-        return null;
+        throw new AssertionError("create not asserted");
     }
 
     @Mutable @Shadow @Final Integer shadowColor;
@@ -60,9 +62,7 @@ public abstract class StyleMixin implements StyleAdditions {
     @Override
     public Style eg_text_customiser$resetShadowColour() {
         Style resetStyle = checkEmptyAfterChange(create(Optional.ofNullable(this.color), Optional.empty(), Optional.ofNullable(this.bold), Optional.ofNullable(this.italic), Optional.ofNullable(this.underlined), Optional.ofNullable(this.strikethrough), Optional.ofNullable(this.obfuscated), Optional.ofNullable(this.clickEvent), Optional.ofNullable(this.hoverEvent), Optional.ofNullable(this.insertion), Optional.ofNullable(this.font)), this.shadowColor, null);
-        if(resetStyle != null) {
-            ((StyleAdditions) resetStyle).eg_text_customiser$setInheritShadowColour(true);
-        }
+        ((StyleAdditions) resetStyle).eg_text_customiser$setInheritShadowColour(true);
         return resetStyle;
     }
 
@@ -84,5 +84,34 @@ public abstract class StyleMixin implements StyleAdditions {
     @Override
     public void eg_text_customiser$setHasBeenOverridden(boolean newValue) {
         this.eg_text_customiser$hasBeenOverridden = newValue;
+    }
+
+    @WrapOperation(
+        at = @At(value = "INVOKE", target = "Ljava/util/Objects;equals(Ljava/lang/Object;Ljava/lang/Object;)Z"),
+        method = "equals",
+        remap = false
+    )
+    private boolean eg_text_customiser$addEqualityForSignTextField(Object a, Object b, Operation<Boolean> original) {
+        if((a instanceof Style styleA) && (b instanceof Style styleB)) {
+            return original.call(a, b) && Objects.equals(((StyleAdditions) styleA).eg_text_customiser$isSign(), ((StyleAdditions) styleB).eg_text_customiser$isSign());
+        }
+        return original.call(a, b);
+    }
+
+    @Override
+    public Style eg_text_customiser$setIsSign() {
+        Style newStyle = StyleInvoker.eg_text_customiser$invokeInit(this.color, this.shadowColor, this.bold, this.italic, this.underlined, this.strikethrough, this.obfuscated, this.clickEvent, this.hoverEvent, this.insertion, this.font);
+        ((StyleAdditions) newStyle).eg_text_customiser$setIsSign(true);
+        return newStyle;
+    }
+
+    @Override
+    public void eg_text_customiser$setIsSign(boolean newValue) {
+        this.eg_text_customiser$isSign = newValue;
+    }
+
+    @Override
+    public boolean eg_text_customiser$isSign() {
+        return this.eg_text_customiser$isSign;
     }
 }
