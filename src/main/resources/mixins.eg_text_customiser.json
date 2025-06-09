@@ -4,11 +4,12 @@
   "package": "games.enchanted.eg_text_customiser.common.mixin",
   "compatibilityLevel": "JAVA_${java_ver}",
   "mixins": [
+    "MutableComponentMixin"
   ],
   "client": [
     "StringDecomposerMixin",
-    "StyleMixin",
     "StringRenderOutputMixin",
+    "StyleMixin",
     "accessor.TextColorAccess"
   ],
   "injectors": {

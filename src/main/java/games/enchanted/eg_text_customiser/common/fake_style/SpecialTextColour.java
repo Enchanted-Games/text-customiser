@@ -92,11 +92,22 @@ public class SpecialTextColour {
         }
     }
 
+    private boolean compareColour(Either<Integer, String> comparison) {
+        if(colourValueOrName.left().isPresent() && comparison.left().isPresent()) {
+            // integer comparison
+            return Objects.equals(colourValueOrName.left(), comparison.left());
+        } else if(colourValueOrName.right().isPresent() && comparison.right().isPresent()) {
+            // name comparison
+            return Objects.equals(colourValueOrName.right(), comparison.right());
+        }
+        return false;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         SpecialTextColour that = (SpecialTextColour) o;
-        return isSignText == that.isSignText && isGlowingSignText == that.isGlowingSignText && isGlowingOutline == that.isGlowingOutline && Objects.equals(colourValueOrName, that.colourValueOrName);
+        return isSignText == that.isSignText && isGlowingSignText == that.isGlowingSignText && isGlowingOutline == that.isGlowingOutline && compareColour(that.colourValueOrName);
     }
 
     @Override
