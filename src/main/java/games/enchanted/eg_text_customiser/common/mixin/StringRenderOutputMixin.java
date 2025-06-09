@@ -9,7 +9,6 @@ import games.enchanted.eg_text_customiser.common.fake_style.SpecialTextColour;
 import games.enchanted.eg_text_customiser.common.pack.TextOverrideManager;
 import games.enchanted.eg_text_customiser.common.util.ColourUtil;
 import net.minecraft.network.chat.TextColor;
-import net.minecraft.util.ARGB;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
