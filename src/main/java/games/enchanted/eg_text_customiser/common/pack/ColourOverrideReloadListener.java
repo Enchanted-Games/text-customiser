@@ -3,7 +3,6 @@ package games.enchanted.eg_text_customiser.common.pack;
 import games.enchanted.eg_text_customiser.common.Logging;
 import games.enchanted.eg_text_customiser.common.pack.colour_override.ColourOverrideDefinition;
 import games.enchanted.eg_text_customiser.common.util.ResourceLocationUtil;
-import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -13,7 +12,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
+//? if fabric {
+import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 //?}
+
 public class ColourOverrideReloadListener extends SimpleJsonResourceReloadListener<ColourOverrideDefinition>
 //? if fabric {
     implements IdentifiableResourceReloadListener
