@@ -7,6 +7,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import games.enchanted.eg_text_customiser.common.fake_style.FakeStyle;
 import games.enchanted.eg_text_customiser.common.fake_style.SpecialTextColour;
 import games.enchanted.eg_text_customiser.common.pack.TextOverrideManager;
+import games.enchanted.eg_text_customiser.common.util.ColourUtil;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.util.ARGB;
 import org.jetbrains.annotations.Nullable;
@@ -29,7 +30,7 @@ public class StringRenderOutputMixin {
     )
     private int eg_text_customiser$replaceTextShadowColour(int textColour, float scale, Operation<Integer> original) {
         if(eg_text_customiser$successfulMainTextMatch != null) {
-            int modified = original.call(eg_text_customiser$successfulMainTextMatch + 0xff000000, 1f);
+            int modified = original.call(eg_text_customiser$successfulMainTextMatch, 1f);
             eg_text_customiser$successfulMainTextMatch = null;
             return modified;
         }
@@ -44,13 +45,19 @@ public class StringRenderOutputMixin {
         method = "Lnet/minecraft/client/gui/Font$StringRenderOutput;getTextColor(Lnet/minecraft/network/chat/TextColor;)I"
     )
     private int eg_text_customiser$replaceTextColour(int original, @Nullable @Local(ordinal = 0, argsOnly = true) TextColor textColor) {
-        FakeStyle fakeStyle = new FakeStyle(new SpecialTextColour(ARGB.opaque(original == -1 ? color : original) - 0xff000000), null, null, null, null, null, null, null);
+        FakeStyle fakeStyle = new FakeStyle(new SpecialTextColour(ColourUtil.removeAlpha(original == -1 ? color : original)), null, null, null, null, null, null, null);
         FakeStyle overrideStyle = TextOverrideManager.applyFakeColourOverride(fakeStyle);
         if(overrideStyle.colour() == null) {
             eg_text_customiser$successfulMainTextMatch = null;
             return original;
         }
-        eg_text_customiser$successfulMainTextMatch = overrideStyle.shadowColour();
-        return overrideStyle.colour().safeGetAsRGB() + 0xff000000;
+
+        int alpha = ColourUtil.extractAlpha(original == -1 ? color : original);
+        if(overrideStyle.shadowColour() == null) {
+            eg_text_customiser$successfulMainTextMatch = null;
+        } else {
+            eg_text_customiser$successfulMainTextMatch = ColourUtil.applyAlpha(overrideStyle.shadowColour(), alpha);
+        }
+        return ColourUtil.applyAlpha(overrideStyle.colour().safeGetAsRGB(), alpha);
     }
 }
