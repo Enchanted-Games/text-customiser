@@ -14,16 +14,18 @@ import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.pred
 import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.predicates.ColourPredicate;
 import games.enchanted.eg_text_customiser.common.serialization.ColourCodecs;
 import net.minecraft.network.chat.Style;
+import net.minecraft.util.ExtraCodecs;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Optional;
 
 public class ColourOverrideDefinition {
-    public static final Codec<ColourPredicate> SIMPLE_OR_SIGN_COLOUR_CODEC = ColourPredicates.CODEC;
+    public static final Codec<List<ColourPredicate>> SIMPLE_OR_SIGN_COLOUR_CODEC = ExtraCodecs.compactListCodec(ColourPredicates.CODEC);
 
     public static final Codec<ColourOverrideDefinition> CODEC = RecordCodecBuilder.create((RecordCodecBuilder.Instance<ColourOverrideDefinition> instance) ->
         instance.group(
-            SIMPLE_OR_SIGN_COLOUR_CODEC.fieldOf("replace_color").forGetter((override) -> override.colourPredicate),
+            SIMPLE_OR_SIGN_COLOUR_CODEC.fieldOf("replace_color").forGetter((override) -> override.colourPredicates),
             ColourOverrideDefinition.ReplaceWithPart.CODEC.fieldOf("with").forGetter((override) -> override.replacement)
         ).apply(
             instance,
@@ -31,17 +33,22 @@ public class ColourOverrideDefinition {
         )
     );
 
-    final ColourPredicate colourPredicate;
+    final List<ColourPredicate> colourPredicates;
     final ColourOverrideDefinition.ReplaceWithPart replacement;
 
-    public ColourOverrideDefinition(ColourPredicate colourPredicate, ColourOverrideDefinition.ReplaceWithPart replaceWithPart) {
-        this.colourPredicate = colourPredicate;
+    public ColourOverrideDefinition(List<ColourPredicate> colourPredicates, ColourOverrideDefinition.ReplaceWithPart replaceWithPart) {
+        this.colourPredicates = colourPredicates;
 
         this.replacement = replaceWithPart;
     }
 
     public boolean styleMatches(FakeStyle style) {
-        return colourPredicate.colourMatches(style.colour());
+        for (ColourPredicate predicate : colourPredicates) {
+            if(predicate.colourMatches(style.colour())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Style applyToStyle(Style style) {
@@ -72,7 +79,7 @@ public class ColourOverrideDefinition {
 
     public static void printExample() {
         DataResult<JsonElement> result = ColourOverrideDefinition.CODEC.encodeStart(JsonOps.INSTANCE, new ColourOverrideDefinition(
-            new BasicColourPredicate(new SpecialTextColour("red")),
+            List.of(new BasicColourPredicate(new SpecialTextColour("red"))),
             new ReplaceWithPart(0xffffff, 0x777777)
         ));
         if(result.error().isPresent()) {
@@ -85,15 +92,15 @@ public class ColourOverrideDefinition {
     public record ReplaceWithPart(@Nullable Integer colour, @Nullable Integer shadowColour) {
         public static final Codec<ReplaceWithPart> CODEC = RecordCodecBuilder.create((RecordCodecBuilder.Instance<ReplaceWithPart> instance) ->
             instance.group(
-                    ColourCodecs.RGB_HEX_CODEC.optionalFieldOf("color").forGetter((part) -> Optional.ofNullable(part.colour)),
-                    ColourCodecs.RGB_HEX_CODEC.optionalFieldOf("shadow_color").forGetter(part -> Optional.ofNullable(part.shadowColour))
+                ColourCodecs.RGB_HEX_CODEC.optionalFieldOf("color").forGetter((part) -> Optional.ofNullable(part.colour)),
+                ColourCodecs.RGB_HEX_CODEC.optionalFieldOf("shadow_color").forGetter(part -> Optional.ofNullable(part.shadowColour))
+            )
+            .apply(
+                instance, (Optional<Integer> colour, Optional<Integer> shadowColour) -> new ReplaceWithPart(
+                    colour.orElse(null),
+                    shadowColour.orElse(null)
                 )
-                .apply(
-                    instance, (Optional<Integer> colour, Optional<Integer> shadowColour) -> new ReplaceWithPart(
-                        colour.orElse(null),
-                        shadowColour.orElse(null)
-                    )
-                )
+            )
         );
     }
 }

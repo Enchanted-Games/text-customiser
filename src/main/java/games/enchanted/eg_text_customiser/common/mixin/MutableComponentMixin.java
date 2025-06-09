@@ -21,7 +21,8 @@ public abstract class MutableComponentMixin {
         method = "getStyle"
     )
     private Style eg_text_customiser$modifyGetStyleReturn(Style original) {
-        // TODO: fix shadow colour inheriting to other component siblings
+        // TODO: fix colour overrides not respecting colour inheritance properly
+        // /tellraw @s ["plain text ",{text:"[",color:green},{text:"Diamonds"},{text:"]",color:green}]
         if(style.isEmpty()) return original;
         if(!Thread.currentThread().getName().contains("Render thread")) return original;
         Style newStyle = TextOverrideManager.applyColourOverride(original);
