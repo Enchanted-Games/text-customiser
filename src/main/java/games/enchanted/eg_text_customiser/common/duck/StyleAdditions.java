@@ -12,6 +12,8 @@ public interface StyleAdditions {
      * @return the boolean
      */
     boolean eg_text_customiser$shouldInheritShadowColour();
-
     void eg_text_customiser$setInheritShadowColour(boolean newInheritance);
+
+    boolean eg_text_customiser$hasBeenOverridden();
+    void eg_text_customiser$setHasBeenOverridden(boolean newValue);
 }

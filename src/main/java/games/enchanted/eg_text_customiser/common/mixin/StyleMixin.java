@@ -12,11 +12,13 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Mixin(Style.class)
 public abstract class StyleMixin implements StyleAdditions {
     @Unique private boolean eg_text_customiser$inheritShadowColour = true;
+    @Unique private boolean eg_text_customiser$hasBeenOverridden = false;
 
     @Shadow
     private static <T> Style checkEmptyAfterChange(Style style, T oldValue, T newValue) {
@@ -44,10 +46,13 @@ public abstract class StyleMixin implements StyleAdditions {
         at = @At(value = "NEW", target = "(Lnet/minecraft/network/chat/TextColor;Ljava/lang/Integer;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Lnet/minecraft/network/chat/ClickEvent;Lnet/minecraft/network/chat/HoverEvent;Ljava/lang/String;Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/network/chat/Style;"),
         method = "*"
     )
-    private Style handler(@Nullable TextColor color, @Nullable Integer shadowColor, @Nullable Boolean bold, @Nullable Boolean italic, @Nullable Boolean underlined, @Nullable Boolean strikethrough, @Nullable Boolean obfuscated, @Nullable ClickEvent clickEvent, @Nullable HoverEvent hoverEvent, @Nullable String insertion, @Nullable ResourceLocation font, Operation<Style> original) {
+    private Style eg_text_customiser$initialiseFieldsOnNewInstance(@Nullable TextColor color, @Nullable Integer shadowColor, @Nullable Boolean bold, @Nullable Boolean italic, @Nullable Boolean underlined, @Nullable Boolean strikethrough, @Nullable Boolean obfuscated, @Nullable ClickEvent clickEvent, @Nullable HoverEvent hoverEvent, @Nullable String insertion, @Nullable ResourceLocation font, Operation<Style> original) {
         Style newStyle = original.call(color, shadowColor, bold, italic, underlined, strikethrough, obfuscated, clickEvent, hoverEvent, insertion, font);
         if(this.eg_text_customiser$inheritShadowColour) {
             ((StyleAdditions) newStyle).eg_text_customiser$setInheritShadowColour(true);
+        }
+        if(this.eg_text_customiser$hasBeenOverridden && Objects.equals(color, this.color)) {
+            ((StyleAdditions) newStyle).eg_text_customiser$setHasBeenOverridden(true);
         }
         return newStyle;
     }
@@ -69,5 +74,15 @@ public abstract class StyleMixin implements StyleAdditions {
     @Override
     public void eg_text_customiser$setInheritShadowColour(boolean newInheritance) {
         this.eg_text_customiser$inheritShadowColour = newInheritance;
+    }
+
+    @Override
+    public boolean eg_text_customiser$hasBeenOverridden() {
+        return this.eg_text_customiser$hasBeenOverridden;
+    }
+
+    @Override
+    public void eg_text_customiser$setHasBeenOverridden(boolean newValue) {
+        this.eg_text_customiser$hasBeenOverridden = newValue;
     }
 }

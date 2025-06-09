@@ -6,6 +6,7 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import games.enchanted.eg_text_customiser.common.Logging;
+import games.enchanted.eg_text_customiser.common.duck.StyleAdditions;
 import games.enchanted.eg_text_customiser.common.fake_style.FakeStyle;
 import games.enchanted.eg_text_customiser.common.fake_style.SpecialTextColour;
 import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.ColourPredicates;
@@ -43,7 +44,7 @@ public class ColourOverrideDefinition {
         return colourPredicate.colourMatches(style.colour());
     }
 
-    public Style applyToStyleIfMatching(Style style) {
+    public Style applyToStyle(Style style) {
         Style modifiedStyle = style;
         if(replacement.colour != null) {
             modifiedStyle = modifiedStyle.withColor(replacement.colour);
@@ -51,10 +52,11 @@ public class ColourOverrideDefinition {
         if(replacement.shadowColour != null) {
             modifiedStyle = modifiedStyle.withShadowColor(replacement.shadowColour + 0xff000000);
         }
+        ((StyleAdditions) modifiedStyle).eg_text_customiser$setHasBeenOverridden(true);
         return modifiedStyle;
     }
 
-    public FakeStyle applyToStyleIfMatching(FakeStyle style) {
+    public FakeStyle applyToStyle(FakeStyle style) {
         return new FakeStyle(
             replacement.colour == null ? style.colour() : new SpecialTextColour(replacement.colour),
             replacement.shadowColour == null ? style.shadowColour() : replacement.shadowColour,
@@ -63,7 +65,8 @@ public class ColourOverrideDefinition {
             style.underlined(),
             style.strikethrough(),
             style.obfuscated(),
-            style.font()
+            style.font(),
+            true
         );
     }
 

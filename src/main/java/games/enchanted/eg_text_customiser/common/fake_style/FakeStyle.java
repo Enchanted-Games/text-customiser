@@ -7,6 +7,8 @@ import net.minecraft.world.level.block.entity.SignText;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 public record FakeStyle(
     @Nullable SpecialTextColour colour,
     @Nullable Integer shadowColour,
@@ -15,7 +17,8 @@ public record FakeStyle(
     @Nullable Boolean underlined,
     @Nullable Boolean strikethrough,
     @Nullable Boolean obfuscated,
-    @Nullable ResourceLocation font
+    @Nullable ResourceLocation font,
+    boolean hasBeenOverridden
 ) {
     public static FakeStyle fromStyle(Style style) {
         SpecialTextColour specialTextColour;
@@ -28,39 +31,37 @@ public record FakeStyle(
             style.isUnderlined(),
             style.isStrikethrough(),
             style.isObfuscated(),
-            style.getFont()
+            style.getFont(),
+            false
         );
     }
 
+    public FakeStyle(
+        @Nullable SpecialTextColour colour,
+        @Nullable Integer shadowColour,
+        @Nullable Boolean bold,
+        @Nullable Boolean italic,
+        @Nullable Boolean underlined,
+        @Nullable Boolean strikethrough,
+        @Nullable Boolean obfuscated,
+        @Nullable ResourceLocation font
+    ) {
+        this(colour, shadowColour, bold, italic, underlined, strikethrough, obfuscated, font, false);
+    }
+
     public static FakeStyle fromSignText(SignText signText, boolean isGlowingOutline) {
-        return new FakeStyle(SpecialTextColour.fromSignText(signText, isGlowingOutline), null, null, null, null, null, null, null);
+        return new FakeStyle(SpecialTextColour.fromSignText(signText, isGlowingOutline), null, null, null, null, null, null, null, false);
     }
 
-    public TextColor getColourAsTextColor(TextColor fallback) {
-        return (colour == null || colour.getColourValueOrName().left().orElse(0) == -1) ? fallback : colour.toTextColor();
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        FakeStyle fakeStyle = (FakeStyle) o;
+        return Objects.equals(bold, fakeStyle.bold) && Objects.equals(italic, fakeStyle.italic) && Objects.equals(underlined, fakeStyle.underlined) && Objects.equals(obfuscated, fakeStyle.obfuscated) && Objects.equals(shadowColour, fakeStyle.shadowColour) && Objects.equals(strikethrough, fakeStyle.strikethrough) && Objects.equals(font, fakeStyle.font) && Objects.equals(colour, fakeStyle.colour);
     }
 
-    public @NotNull Boolean getBoldSafe(Boolean fallback) {
-        return bold == null ? fallback : bold;
-    }
-
-    public @NotNull Boolean getItalicSafe(Boolean fallback) {
-        return italic == null ? fallback : italic;
-    }
-
-    public @NotNull Boolean getUnderlinedSafe(Boolean fallback) {
-        return underlined == null ? fallback : underlined;
-    }
-
-    public @NotNull Boolean getStrikethroughSafe(Boolean fallback) {
-        return strikethrough == null ? fallback : strikethrough;
-    }
-
-    public @NotNull Boolean getObfuscatedSafe(Boolean fallback) {
-        return obfuscated == null ? fallback : obfuscated;
-    }
-
-    public @NotNull ResourceLocation getFontSafe(ResourceLocation fallback) {
-        return font == null ? fallback : font;
+    @Override
+    public int hashCode() {
+        return Objects.hash(colour, shadowColour, bold, italic, underlined, strikethrough, obfuscated, font);
     }
 }

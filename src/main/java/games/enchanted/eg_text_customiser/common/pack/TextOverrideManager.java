@@ -1,5 +1,6 @@
 package games.enchanted.eg_text_customiser.common.pack;
 
+import games.enchanted.eg_text_customiser.common.duck.StyleAdditions;
 import games.enchanted.eg_text_customiser.common.fake_style.FakeStyle;
 import games.enchanted.eg_text_customiser.common.pack.colour_override.ColourOverrideDefinition;
 import games.enchanted.eg_text_customiser.common.pack.style_override.StyleOverrideDefinition;
@@ -34,29 +35,37 @@ public class TextOverrideManager {
     }
 
     public static synchronized FakeStyle applyFakeColourOverride(FakeStyle originalStyle) {
+        if(originalStyle.hasBeenOverridden()) {
+            return originalStyle;
+        }
+
         if(MATCHED_STYLES.containsKey(originalStyle)) {
-            return MATCHED_STYLES.get(originalStyle).applyToStyleIfMatching(originalStyle);
+            return MATCHED_STYLES.get(originalStyle).applyToStyle(originalStyle);
         }
 
         ColourOverrideDefinition overrideDefinition = getDefinitionForStyle(originalStyle);
         if(overrideDefinition == null) {
             return originalStyle;
         }
-        return overrideDefinition.applyToStyleIfMatching(originalStyle);
+        return overrideDefinition.applyToStyle(originalStyle);
     }
 
     public static synchronized Style applyColourOverride(Style originalStyle) {
+        if(((StyleAdditions) originalStyle).eg_text_customiser$hasBeenOverridden()) {
+            return originalStyle;
+        }
+
         FakeStyle fakeStyle = FakeStyle.fromStyle(originalStyle);
 
         if(MATCHED_STYLES.containsKey(fakeStyle)) {
-            return MATCHED_STYLES.get(fakeStyle).applyToStyleIfMatching(originalStyle);
+            return MATCHED_STYLES.get(fakeStyle).applyToStyle(originalStyle);
         }
 
         ColourOverrideDefinition overrideDefinition = getDefinitionForStyle(fakeStyle);
         if(overrideDefinition == null) {
             return originalStyle;
         }
-        return overrideDefinition.applyToStyleIfMatching(originalStyle);
+        return overrideDefinition.applyToStyle(originalStyle);
     }
 
     public static void registerOverride(ResourceLocation location, StyleOverrideDefinition definition) {
