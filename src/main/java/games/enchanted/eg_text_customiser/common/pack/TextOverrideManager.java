@@ -3,6 +3,8 @@ package games.enchanted.eg_text_customiser.common.pack;
 import games.enchanted.eg_text_customiser.common.fake_style.FakeStyle;
 import games.enchanted.eg_text_customiser.common.pack.colour_override.ColourOverrideDefinition;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.profiling.Profiler;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -15,30 +17,49 @@ public class TextOverrideManager {
     private static final Map<FakeStyle, FakeStyle> MATCHED_STYLES = new HashMap<>();
     private static final HashSet<FakeStyle> UNMATCHED_STYLED = new HashSet<>();
 
-    private static @Nullable ColourOverrideDefinition getDefinitionForStyle(FakeStyle style) {
+    private static @Nullable ColourOverrideDefinition getDefinitionForStyle(@NotNull FakeStyle style) {
+        Profiler.get().push("eg_text_customiser:check_unmatched");
         if(UNMATCHED_STYLED.contains(style)) {
+            Profiler.get().pop();
             return null;
         }
+        Profiler.get().pop();
+
+        Profiler.get().push("eg_text_customiser:loop");
         for (Map.Entry<ResourceLocation, ColourOverrideDefinition> entry : COLOUR_OVERRIDE_DEFINITIONS.entrySet()) {
-            boolean match = entry.getValue().styleMatches(style);
-            if(match) {
+            Profiler.get().push("eg_text_customiser:check_match");
+            if(entry.getValue().styleMatches(style)) {
                 MATCHED_STYLES.put(style, entry.getValue().applyToStyle(style));
+                Profiler.get().pop();
                 return entry.getValue();
             }
+            Profiler.get().pop();
         }
+        Profiler.get().pop();
+
         UNMATCHED_STYLED.add(style);
         return null;
     }
 
-    public static synchronized FakeStyle applyFakeColourOverride(FakeStyle originalStyle) {
-        if(MATCHED_STYLES.containsKey(originalStyle)) {
-            return MATCHED_STYLES.get(originalStyle);
+    public static synchronized FakeStyle applyFakeColourOverride(@NotNull FakeStyle originalStyle) {
+        // TODO: implement better hash functions for FakeStyle and ColourOverrideDefinition
+        Profiler.get().push("eg_text_customiser:check_matched");
+        @Nullable FakeStyle matchedStyle = MATCHED_STYLES.get(originalStyle);
+        if(matchedStyle != null) {
+            Profiler.get().pop();
+            return matchedStyle;
         }
+        Profiler.get().pop();
 
+        Profiler.get().push("eg_text_customiser:get_definition");
         ColourOverrideDefinition overrideDefinition = getDefinitionForStyle(originalStyle);
+        Profiler.get().pop();
+        Profiler.get().push("eg_text_customiser:check_null_or_apply");
         if(overrideDefinition == null) {
+            Profiler.get().pop();
             return originalStyle;
         }
+        Profiler.get().pop();
         return overrideDefinition.applyToStyle(originalStyle);
     }
 

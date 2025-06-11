@@ -19,9 +19,11 @@ import games.enchanted.eg_text_customiser.common.util.ColourUtil;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.profiling.Profiler;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -92,23 +94,15 @@ public class ColourOverrideDefinition {
     }
 
     public boolean styleMatches(FakeStyle style) {
-        return tests.stream().allMatch(test -> test.apply(style));
-    }
-
-    public Style applyToStyle(Style style) {
-        Style modifiedStyle = style;
-        if(replacement.colour != null) {
-            modifiedStyle = modifiedStyle.withColor(replacement.colour);
-        }
-        if(replacement.shadowColour != null) {
-            modifiedStyle = modifiedStyle.withShadowColor(ColourUtil.applyAlpha(replacement.shadowColour, 255));
-        }
-        ((StyleAdditions) modifiedStyle).eg_text_customiser$setHasBeenOverridden(true);
-        return modifiedStyle;
+        Profiler.get().push("eg_text_customiser:check_style_matches");
+        boolean result = tests.stream().allMatch(test -> test.apply(style));
+        Profiler.get().pop();
+        return result;
     }
 
     public FakeStyle applyToStyle(FakeStyle style) {
-        return new FakeStyle(
+        Profiler.get().push("eg_text_customiser:apply_to_style");
+        FakeStyle newStyle = new FakeStyle(
             replacement.colour == null ? style.colour() : new SpecialTextColour(replacement.colour),
             replacement.shadowColour == null ? style.shadowColour() : replacement.shadowColour,
             style.bold(),
@@ -119,6 +113,8 @@ public class ColourOverrideDefinition {
             style.font(),
             properties
         );
+        Profiler.get().pop();
+        return newStyle;
     }
 
     public static void printExample() {

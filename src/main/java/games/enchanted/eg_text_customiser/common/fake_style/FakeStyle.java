@@ -37,17 +37,8 @@ public record FakeStyle(
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        FakeStyle fakeStyle = (FakeStyle) o;
-        return Objects.equals(bold, fakeStyle.bold) &&
-            Objects.equals(italic, fakeStyle.italic) &&
-            Objects.equals(underlined, fakeStyle.underlined) &&
-            Objects.equals(obfuscated, fakeStyle.obfuscated) &&
-            Objects.equals(shadowColour, fakeStyle.shadowColour) &&
-            Objects.equals(strikethrough, fakeStyle.strikethrough) &&
-            Objects.equals(font, fakeStyle.font) &&
-            Objects.equals(colour, fakeStyle.colour) &&
-            Objects.equals(properties, fakeStyle.properties);
+        if (!(o instanceof FakeStyle fakeStyle)) return false;
+        return Objects.equals(bold, fakeStyle.bold) && Objects.equals(italic, fakeStyle.italic) && Objects.equals(underlined, fakeStyle.underlined) && Objects.equals(obfuscated, fakeStyle.obfuscated) && Objects.equals(shadowColour, fakeStyle.shadowColour) && Objects.equals(strikethrough, fakeStyle.strikethrough) && Objects.equals(font, fakeStyle.font) && Objects.equals(colour, fakeStyle.colour) && Objects.equals(properties, fakeStyle.properties);
     }
 
     @Override
