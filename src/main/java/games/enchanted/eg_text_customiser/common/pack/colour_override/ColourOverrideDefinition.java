@@ -134,14 +134,16 @@ public class ColourOverrideDefinition {
         Logging.info("Example file: {}", result.getOrThrow().toString());
     }
 
-    public record PropertiesPart(boolean autoGenerateShadow) {
-        public static final boolean AUTO_GENERATE_SHADOW_DEFAULT = true;
+    public record PropertiesPart(boolean autoGenerateShadow, float autoShadowMultiplier) {
+        public static final boolean AUTO_GENERATE_SHADOW_DEFAULT = false;
+        public static final float AUTO_SHADOW_MULTIPLIER_DEFAULT = 0.25f;
 
-        public static final PropertiesPart DEFAULT = new PropertiesPart(AUTO_GENERATE_SHADOW_DEFAULT);
+        public static final PropertiesPart DEFAULT = new PropertiesPart(AUTO_GENERATE_SHADOW_DEFAULT, AUTO_SHADOW_MULTIPLIER_DEFAULT);
 
         private static final Codec<PropertiesPart> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
-                Codec.BOOL.optionalFieldOf("auto_generate_shadow", AUTO_GENERATE_SHADOW_DEFAULT).forGetter(part -> part.autoGenerateShadow)
+                Codec.BOOL.optionalFieldOf("auto_generate_shadow", AUTO_GENERATE_SHADOW_DEFAULT).forGetter(part -> part.autoGenerateShadow),
+                ExtraCodecs.floatRange(0, 1).optionalFieldOf("auto_shadow_multiplier", AUTO_SHADOW_MULTIPLIER_DEFAULT).forGetter(part -> part.autoShadowMultiplier)
             ).apply(
                 instance, PropertiesPart::new
             )

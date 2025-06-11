@@ -1,5 +1,6 @@
 package games.enchanted.eg_text_customiser.common.mixin;
 
+import games.enchanted.eg_text_customiser.common.duck.StyleAdditions;
 import games.enchanted.eg_text_customiser.common.fake_style.FakeStyle;
 import games.enchanted.eg_text_customiser.common.fake_style.SpecialTextColour;
 import games.enchanted.eg_text_customiser.common.pack.TextOverrideManager;
@@ -27,6 +28,8 @@ public abstract class GlyphInstanceMixin {
         method = "<init>"
     )
     private void eg_text_customiser$replaceGlyphTextColours(float x, float y, int color, int shadowColor, BakedGlyph bakedGlyph, Style style, float boldOffset, float shadowOffset, CallbackInfo ci) {
+        if(((StyleAdditions) style).eg_text_customiser$isSign()) return;
+
         int noAlphaColour = ColourUtil.removeAlpha(color);
         SpecialTextColour comparisonTextColour;
         if(style.getColor() != null) {
@@ -49,9 +52,15 @@ public abstract class GlyphInstanceMixin {
         if(!this.hasShadow()) return;
 
         int shadowAlpha = ColourUtil.extractAlpha(shadowColor);
-        if (newStyle.colour() != null && newStyle.shadowColour() != null && newStyle.shadowColour() == noAlphaShadowColour && newStyle.properties().autoGenerateShadow()) {
+//        if (
+//            newStyle.colour() != null && (
+//                newStyle.properties().autoGenerateShadow() ||
+//                (newStyle.shadowColour() != null && newStyle.shadowColour() == noAlphaShadowColour)
+//            )
+//        ) {
+        if(newStyle.colour() != null && newStyle.shadowColour() != null && newStyle.shadowColour() == noAlphaShadowColour && newStyle.properties().autoGenerateShadow()) {
             // shadow colour has not changed but regular colour has, change shadow based on new colour
-            this.shadowColor = ColourUtil.applyAlpha(ARGB.scaleRGB(newStyle.colour().safeGetAsRGB(), 0.25f), shadowAlpha);
+            this.shadowColor = ColourUtil.applyAlpha(ARGB.scaleRGB(newStyle.colour().safeGetAsRGB(), newStyle.properties().autoShadowMultiplier()), shadowAlpha);
         }
         else if(newStyle.shadowColour() != null && colourChanged) {
             // shadow colour has changed, replace it
