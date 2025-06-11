@@ -34,6 +34,16 @@ public abstract class StyleMixin implements StyleAdditions {
     @Shadow @Final @Nullable ResourceLocation font;
 
     @WrapOperation(
+        at = @At(value = "NEW", target = "(Lnet/minecraft/network/chat/TextColor;Ljava/lang/Integer;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Lnet/minecraft/network/chat/ClickEvent;Lnet/minecraft/network/chat/HoverEvent;Ljava/lang/String;Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/network/chat/Style;"),
+        method = "*"
+    )
+    private Style eg_text_customiser$initialiseFieldsOnNewInstance(@Nullable TextColor color, @Nullable Integer shadowColor, @Nullable Boolean bold, @Nullable Boolean italic, @Nullable Boolean underlined, @Nullable Boolean strikethrough, @Nullable Boolean obfuscated, @Nullable ClickEvent clickEvent, @Nullable HoverEvent hoverEvent, @Nullable String insertion, @Nullable ResourceLocation font, Operation<Style> original) {
+        Style newStyle = original.call(color, shadowColor, bold, italic, underlined, strikethrough, obfuscated, clickEvent, hoverEvent, insertion, font);
+        ((StyleAdditions) newStyle).eg_text_customiser$setSignTextData(this.eg_text_customiser$getSignTextData());
+        return newStyle;
+    }
+
+    @WrapOperation(
         at = @At(value = "INVOKE", target = "Ljava/util/Objects;equals(Ljava/lang/Object;Ljava/lang/Object;)Z"),
         method = "equals",
         remap = false

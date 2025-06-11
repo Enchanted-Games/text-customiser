@@ -2,7 +2,6 @@ package games.enchanted.eg_text_customiser.common.fake_style;
 
 import games.enchanted.eg_text_customiser.common.pack.colour_override.ColourOverrideDefinition;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.entity.SignText;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -31,8 +30,8 @@ public record FakeStyle(
         this(colour, shadowColour, bold, italic, underlined, strikethrough, obfuscated, font, ColourOverrideDefinition.PropertiesPart.DEFAULT);
     }
 
-    public static FakeStyle fromSignText(SignText signText, boolean isGlowingOutline) {
-        return new FakeStyle(SpecialTextColour.fromSignText(signText, isGlowingOutline), null, null, null, null, null, null, null, ColourOverrideDefinition.PropertiesPart.DEFAULT);
+    public static FakeStyle fromSignTextData(SignTextData signTextData, boolean isGlowingOutline) {
+        return new FakeStyle(SpecialTextColour.fromSignTextData(signTextData, isGlowingOutline), null, null, null, null, null, null, null, ColourOverrideDefinition.PropertiesPart.DEFAULT);
     }
 
     @Override

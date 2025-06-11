@@ -33,20 +33,30 @@ public abstract class GlyphInstanceMixin {
         Profiler.get().push("eg_text_customiser:replace_glyph_colour");
         int noAlphaColour = ColourUtil.removeAlpha(color);
 
+        SpecialTextColour comparisonTextColour;
+
         SignTextData signTextData = ((StyleAdditions) style).eg_text_customiser$getSignTextData();
+        boolean currentlyRegularColour;
+        boolean currentlyOutlineColour;
         if(signTextData != null) {
-            int darkColour = ColourUtil.removeAlpha(signTextData.darkColour());
-            int outlineColour = signTextData.outlineColour() == null ? 0 : ColourUtil.removeAlpha(signTextData.outlineColour());
-            Profiler.get().pop();
-            return;
+            currentlyRegularColour = noAlphaColour == ColourUtil.removeAlpha(signTextData.darkColour());
+            currentlyOutlineColour = signTextData.outlineColour() != null && noAlphaColour == ColourUtil.removeAlpha(signTextData.outlineColour());
+            // TODO: fix outline colour not working
+        } else {
+            currentlyRegularColour = false;
+            currentlyOutlineColour = false;
         }
 
-        SpecialTextColour comparisonTextColour;
-        if(style.getColor() != null) {
+        boolean isValidSignText = currentlyRegularColour || currentlyOutlineColour;
+
+        if(!isValidSignText && style.getColor() != null) {
             comparisonTextColour = SpecialTextColour.fromTextColor(style.getColor());
+        } else if(isValidSignText) {
+            comparisonTextColour = SpecialTextColour.fromSignTextData(signTextData, currentlyOutlineColour);
         } else {
             comparisonTextColour = new SpecialTextColour(noAlphaColour);
         }
+
         int noAlphaShadowColour = ColourUtil.removeAlpha(shadowColor);
         FakeStyle fakeStyle = new FakeStyle(comparisonTextColour, noAlphaShadowColour, style.isBold(), style.isItalic(), style.isUnderlined(), style.isStrikethrough(), style.isObfuscated(), style.getFont());
         FakeStyle newStyle = TextOverrideManager.applyFakeColourOverride(fakeStyle);

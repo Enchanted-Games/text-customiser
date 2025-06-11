@@ -5,7 +5,6 @@ import com.mojang.datafixers.util.Either;
 import games.enchanted.eg_text_customiser.common.mixin.accessor.TextColorAccess;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.TextColor;
-import net.minecraft.world.level.block.entity.SignText;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -60,8 +59,11 @@ public class SpecialTextColour {
         return TextColor.fromLegacyFormat(ChatFormatting.getByName(colourValueOrName.right().get()));
     }
 
-    public static SpecialTextColour fromSignText(SignText signText, boolean isGlowingOutline) {
-        return new SpecialTextColour(signText.getColor().getTextColor(), true, signText.hasGlowingText(), isGlowingOutline);
+    public static SpecialTextColour fromSignTextData(SignTextData signTextData, boolean isGlowingOutline) {
+        if(isGlowingOutline && signTextData.outlineColour() == null) {
+            throw new IllegalStateException("SignTextData has no outline colour but tried to create a SpecialTextColour for outline colour");
+        }
+        return new SpecialTextColour(isGlowingOutline ? signTextData.outlineColour() : signTextData.darkColour(), true, signTextData.isGlowingSignText(), isGlowingOutline);
     }
 
     public static SpecialTextColour fromEither(Either<Integer, String> either) {
