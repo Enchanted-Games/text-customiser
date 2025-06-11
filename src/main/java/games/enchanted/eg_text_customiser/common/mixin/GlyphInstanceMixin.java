@@ -41,28 +41,20 @@ public abstract class GlyphInstanceMixin {
         FakeStyle fakeStyle = new FakeStyle(comparisonTextColour, noAlphaShadowColour, style.isBold(), style.isItalic(), style.isUnderlined(), style.isStrikethrough(), style.isObfuscated(), style.getFont());
         FakeStyle newStyle = TextOverrideManager.applyFakeColourOverride(fakeStyle);
 
-        boolean colourChanged = false;
+        int colorAlpha = ColourUtil.extractAlpha(color);
         if(newStyle.colour() != null) {
             int newColour = newStyle.colour().safeGetAsRGB();
-            colourChanged = newStyle.colour().safeGetAsRGB() != noAlphaColour;
-            int alpha = ColourUtil.extractAlpha(color);
-            this.color = ColourUtil.applyAlpha(newColour, alpha);
+            this.color = ColourUtil.applyAlpha(newColour, colorAlpha);
         }
 
-        if(!this.hasShadow()) return;
+        if(!this.hasShadow() && !newStyle.properties().forceEnableShadow()) return;
 
-        int shadowAlpha = ColourUtil.extractAlpha(shadowColor);
-//        if (
-//            newStyle.colour() != null && (
-//                newStyle.properties().autoGenerateShadow() ||
-//                (newStyle.shadowColour() != null && newStyle.shadowColour() == noAlphaShadowColour)
-//            )
-//        ) {
+        int shadowAlpha = newStyle.properties().forceEnableShadow() ? colorAlpha : ColourUtil.extractAlpha(shadowColor);
         if(newStyle.colour() != null && newStyle.shadowColour() != null && newStyle.shadowColour() == noAlphaShadowColour && newStyle.properties().autoGenerateShadow()) {
             // shadow colour has not changed but regular colour has, change shadow based on new colour
             this.shadowColor = ColourUtil.applyAlpha(ARGB.scaleRGB(newStyle.colour().safeGetAsRGB(), newStyle.properties().autoShadowMultiplier()), shadowAlpha);
         }
-        else if(newStyle.shadowColour() != null && colourChanged) {
+        else if(newStyle.shadowColour() != null ) {
             // shadow colour has changed, replace it
             this.shadowColor = ColourUtil.applyAlpha(newStyle.shadowColour(), shadowAlpha);
         }
