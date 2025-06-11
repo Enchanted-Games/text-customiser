@@ -9,7 +9,7 @@ import games.enchanted.eg_text_customiser.common.Logging;
 import games.enchanted.eg_text_customiser.common.serialization.ColourCodecs;
 import games.enchanted.eg_text_customiser.common.fake_style.FakeStyle;
 import games.enchanted.eg_text_customiser.common.fake_style.SpecialTextColour;
-import games.enchanted.eg_text_customiser.common.pack.property_tests.ColourTest;
+import games.enchanted.eg_text_customiser.common.pack.property_tests.ColourPredicateTest;
 import games.enchanted.eg_text_customiser.common.pack.property_tests.SimpleEqualityTest;
 import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.ColourPredicates;
 import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.predicates.BasicColourPredicate;
@@ -36,8 +36,8 @@ public class StyleOverrideDefinition {
 
     final WhenPart whenPart;
     List<Function<FakeStyle, Boolean>> tests;
-    final ColourTest colourTester;
-    final ColourTest shadowColourTester;
+    final ColourPredicateTest colourTester;
+    final ColourPredicateTest shadowColourTester;
     final SimpleEqualityTest<Boolean> boldTester;
     final SimpleEqualityTest<Boolean> italicTester;
     final SimpleEqualityTest<Boolean> underlinedTester;
@@ -48,8 +48,8 @@ public class StyleOverrideDefinition {
 
     public StyleOverrideDefinition(WhenPart whenPart, ReplaceWithPart replaceWithPart) {
         this.whenPart = whenPart;
-        this.colourTester = new ColourTest(whenPart.colour);
-        this.shadowColourTester = new ColourTest(whenPart.shadowColour);
+        this.colourTester = new ColourPredicateTest(whenPart.colour);
+        this.shadowColourTester = new ColourPredicateTest(whenPart.shadowColour);
         this.boldTester = new SimpleEqualityTest<>(whenPart.bold);
         this.italicTester = new SimpleEqualityTest<>(whenPart.italic);
         this.underlinedTester = new SimpleEqualityTest<>(whenPart.underlined);

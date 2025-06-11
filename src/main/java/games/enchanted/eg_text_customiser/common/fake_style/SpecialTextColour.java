@@ -84,7 +84,6 @@ public class SpecialTextColour {
             throw new IllegalStateException("Either has no right or left value");
         }
         ChatFormatting formatting = ChatFormatting.getByName(colourValueOrName.right().get());
-        Integer intRGB;
         if(formatting != null && formatting.isColor() && formatting.getColor() != null) {
             return formatting.getColor();
         } else {

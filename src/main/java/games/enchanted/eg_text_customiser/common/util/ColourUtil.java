@@ -30,11 +30,13 @@ public class ColourUtil {
     }
 
     /**
-     * Removes alpha from an argb int and returns an rgb int
+     * Takes an int in argb decimal format and returns an rgb int
      */
     public static int removeAlpha(int argb) {
-        int[] argbArray = ARGBint_to_ARGB(argb);
-        return RGB_to_RGBint(argbArray[1], argbArray[2], argbArray[3]);
+        int r = (argb >> 16) & 0xFF;
+        int g = (argb >> 8) & 0xFF;
+        int b = argb & 0xFF;
+        return (r << 16) | (g << 8) | b;
     }
 
     /**

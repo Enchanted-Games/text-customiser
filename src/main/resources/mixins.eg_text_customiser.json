@@ -10,11 +10,6 @@
     "accessor.StyleInvoker"
   ],
   "client": [
-    //    "ComponentMixin",
-    //    "MutableComponentMixin",
-    //    "StringDecomposerMixin",
-    //    "StringRenderOutputMixin",
-    //    "StyleMixin",
     "accessor.TextColorAccess"
   ],
   "injectors": {
