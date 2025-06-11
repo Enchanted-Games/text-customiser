@@ -30,6 +30,7 @@ public class ColourOverrideDefinition {
 
     public static final Codec<ColourOverrideDefinition> CODEC = RecordCodecBuilder.create((RecordCodecBuilder.Instance<ColourOverrideDefinition> instance) ->
         instance.group(
+            PropertiesPart.CODEC.optionalFieldOf("properties", PropertiesPart.DEFAULT).forGetter(override -> override.properties),
             WhenPart.CODEC.fieldOf("when").forGetter((override) -> override.when),
             ReplaceWithPart.CODEC.fieldOf("replace_with").forGetter((override) -> override.replacement)
         ).apply(
@@ -38,6 +39,7 @@ public class ColourOverrideDefinition {
         )
     );
 
+    final PropertiesPart properties;
     final WhenPart when;
     final ReplaceWithPart replacement;
     List<Function<FakeStyle, Boolean>> tests;
@@ -51,7 +53,8 @@ public class ColourOverrideDefinition {
     final SimpleEqualityTest<Boolean> obfuscatedTester;
     final SimpleEqualityTest<ResourceLocation> fontTester;
 
-    public ColourOverrideDefinition(WhenPart whenPart, ReplaceWithPart replaceWithPart) {
+    public ColourOverrideDefinition(PropertiesPart propertiesPart, WhenPart whenPart, ReplaceWithPart replaceWithPart) {
+        this.properties = propertiesPart;
         this.when = whenPart;
         this.replacement = replaceWithPart;
 
@@ -114,12 +117,13 @@ public class ColourOverrideDefinition {
             style.strikethrough(),
             style.obfuscated(),
             style.font(),
-            true
+            properties
         );
     }
 
     public static void printExample() {
         DataResult<JsonElement> result = ColourOverrideDefinition.CODEC.encodeStart(JsonOps.INSTANCE, new ColourOverrideDefinition(
+            PropertiesPart.DEFAULT,
             new WhenPart(List.of(new ColourPredicateTest(new BasicColourPredicate(new SpecialTextColour("red")))), null, null, null, null, null, null, null),
             new ReplaceWithPart(0xffffff, 0x777777)
         ));
@@ -128,6 +132,20 @@ public class ColourOverrideDefinition {
         }
 
         Logging.info("Example file: {}", result.getOrThrow().toString());
+    }
+
+    public record PropertiesPart(boolean autoGenerateShadow) {
+        public static final boolean AUTO_GENERATE_SHADOW_DEFAULT = true;
+
+        public static final PropertiesPart DEFAULT = new PropertiesPart(AUTO_GENERATE_SHADOW_DEFAULT);
+
+        private static final Codec<PropertiesPart> CODEC = RecordCodecBuilder.create(instance ->
+            instance.group(
+                Codec.BOOL.optionalFieldOf("auto_generate_shadow", AUTO_GENERATE_SHADOW_DEFAULT).forGetter(part -> part.autoGenerateShadow)
+            ).apply(
+                instance, PropertiesPart::new
+            )
+        );
     }
 
     public record WhenPart(@Nullable List<ColourPredicateTest> colour, @Nullable List<ColourPredicateTest> shadowColour, @Nullable Boolean bold, @Nullable Boolean italic, @Nullable Boolean underlined, @Nullable Boolean strikethrough, @Nullable Boolean obfuscated, @Nullable ResourceLocation font) {
