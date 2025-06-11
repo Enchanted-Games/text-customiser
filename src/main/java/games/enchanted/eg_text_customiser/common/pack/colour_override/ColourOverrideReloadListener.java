@@ -1,7 +1,7 @@
-package games.enchanted.eg_text_customiser.common.pack;
+package games.enchanted.eg_text_customiser.common.pack.colour_override;
 
 import games.enchanted.eg_text_customiser.common.Logging;
-import games.enchanted.eg_text_customiser.common.pack.colour_override.ColourOverrideDefinition;
+import games.enchanted.eg_text_customiser.common.pack.TextOverrideManager;
 import games.enchanted.eg_text_customiser.common.util.ResourceLocationUtil;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;

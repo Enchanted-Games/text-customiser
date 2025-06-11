@@ -3,7 +3,6 @@ package games.enchanted.eg_text_customiser.common.pack;
 import games.enchanted.eg_text_customiser.common.duck.StyleAdditions;
 import games.enchanted.eg_text_customiser.common.fake_style.FakeStyle;
 import games.enchanted.eg_text_customiser.common.pack.colour_override.ColourOverrideDefinition;
-import games.enchanted.eg_text_customiser.common.pack.style_override.StyleOverrideDefinition;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.NotImplementedException;
@@ -68,9 +67,6 @@ public class TextOverrideManager {
         return overrideDefinition.applyToStyle(originalStyle);
     }
 
-    public static void registerOverride(ResourceLocation location, StyleOverrideDefinition definition) {
-        throw new NotImplementedException("StyleOverrideDefinition not implemented");
-    }
     public static void registerOverride(ResourceLocation location, ColourOverrideDefinition definition) {
         COLOUR_OVERRIDE_DEFINITIONS.put(location, definition);
     }

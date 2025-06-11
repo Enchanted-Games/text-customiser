@@ -1,7 +1,6 @@
 package games.enchanted.eg_text_customiser.common;
 
 import games.enchanted.eg_text_customiser.common.pack.colour_override.ColourOverrideDefinition;
-import games.enchanted.eg_text_customiser.common.pack.style_override.StyleOverrideDefinition;
 import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.ColourPredicates;
 
 /**

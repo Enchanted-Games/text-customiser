@@ -2,7 +2,7 @@
 /*package games.enchanted.eg_text_customiser.neoforge;
 
 import games.enchanted.eg_text_customiser.common.ModEntry;
-import games.enchanted.eg_text_customiser.common.pack.ColourOverrideReloadListener;
+import games.enchanted.eg_text_customiser.common.pack.colour_override.ColourOverrideReloadListener;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
