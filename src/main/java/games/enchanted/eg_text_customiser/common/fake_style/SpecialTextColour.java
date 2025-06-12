@@ -96,6 +96,10 @@ public class SpecialTextColour {
         }
     }
 
+    public @Nullable DyeColor getDyeColor() {
+        return dyeColor;
+    }
+
     private boolean compareColour(Either<Integer, String> comparison) {
         if(colourValueOrName.left().isPresent() && comparison.left().isPresent()) {
             // integer comparison
