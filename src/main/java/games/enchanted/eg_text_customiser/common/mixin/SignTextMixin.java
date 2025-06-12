@@ -20,10 +20,7 @@ import java.util.Objects;
 
 @Mixin(SignText.class)
 public abstract class SignTextMixin {
-    @Shadow @Final private DyeColor color;
-
     @Shadow public abstract DyeColor getColor();
-
     @Shadow public abstract boolean hasGlowingText();
 
     @ModifyVariable(

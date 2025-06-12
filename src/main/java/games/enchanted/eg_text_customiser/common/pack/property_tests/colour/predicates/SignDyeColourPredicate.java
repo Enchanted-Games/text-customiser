@@ -3,6 +3,7 @@ package games.enchanted.eg_text_customiser.common.pack.property_tests.colour.pre
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import games.enchanted.eg_text_customiser.common.fake_style.SignTextData;
 import games.enchanted.eg_text_customiser.common.fake_style.SpecialTextColour;
 import net.minecraft.world.item.DyeColor;
 
@@ -30,7 +31,8 @@ public class SignDyeColourPredicate implements ColourPredicate {
 
     @Override
     public boolean colourMatches(SpecialTextColour colour) {
-        return colour.equals(new SpecialTextColour(dyeColor.getTextColor(), true, glowing, isGlowingOutline));
+        // These colours in SignTextData are not used for comparison, just placeholders
+        return colour.equals(SpecialTextColour.fromSignTextData(new SignTextData(dyeColor, glowing, 0, 0), isGlowingOutline));
     }
 
     @Override

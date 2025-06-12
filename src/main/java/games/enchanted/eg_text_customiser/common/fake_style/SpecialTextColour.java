@@ -5,6 +5,8 @@ import com.mojang.datafixers.util.Either;
 import games.enchanted.eg_text_customiser.common.mixin.accessor.TextColorAccess;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.world.item.DyeColor;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -16,6 +18,7 @@ public class SpecialTextColour {
     private final boolean isSignText;
     private final boolean isGlowingSignText;
     private final boolean isGlowingOutline;
+    @Nullable private final DyeColor dyeColor;
 
     public SpecialTextColour(int rgb) {
         if(rgb == -1) rgb = WHITE;
@@ -23,6 +26,7 @@ public class SpecialTextColour {
         this.isSignText = false;
         this.isGlowingSignText = false;
         this.isGlowingOutline = false;
+        this.dyeColor = null;
     }
 
     public SpecialTextColour(String colourName) {
@@ -30,13 +34,15 @@ public class SpecialTextColour {
         this.isSignText = false;
         this.isGlowingSignText = false;
         this.isGlowingOutline = false;
+        this.dyeColor = null;
     }
 
-    public SpecialTextColour(int rgb, boolean isSignText, boolean isGlowingSignText, boolean isGlowingOutline) {
+    public SpecialTextColour(int rgb, @NotNull DyeColor dyeColor, boolean isSignText, boolean isGlowingSignText, boolean isGlowingOutline) {
         this.colourValueOrName = Either.left(rgb);
         this.isSignText = isSignText;
         this.isGlowingSignText = isGlowingSignText;
         this.isGlowingOutline = isGlowingOutline;
+        this.dyeColor = dyeColor;
     }
 
     public static SpecialTextColour fromTextColor(@Nullable TextColor textColor) {
@@ -50,20 +56,17 @@ public class SpecialTextColour {
         return new SpecialTextColour(textColor.getValue());
     }
 
-    public TextColor toTextColor() {
-        if(colourValueOrName.left().isPresent()) {
-            return TextColor.fromRgb(colourValueOrName.left().get());
-        } else if(colourValueOrName.right().isEmpty()) {
-            throw new IllegalStateException("Either passed with no right or left value");
-        }
-        return TextColor.fromLegacyFormat(ChatFormatting.getByName(colourValueOrName.right().get()));
-    }
-
     public static SpecialTextColour fromSignTextData(SignTextData signTextData, boolean isGlowingOutline) {
         if(isGlowingOutline && signTextData.outlineColour() == null) {
             throw new IllegalStateException("SignTextData has no outline colour but tried to create a SpecialTextColour for outline colour");
         }
-        return new SpecialTextColour(isGlowingOutline ? signTextData.outlineColour() : signTextData.darkColour(), true, signTextData.isGlowingSignText(), isGlowingOutline);
+        return new SpecialTextColour(
+            isGlowingOutline ? signTextData.outlineColour() : signTextData.darkColour(),
+            signTextData.dyeColor(),
+            true,
+            signTextData.isGlowingSignText(),
+            isGlowingOutline
+        );
     }
 
     public static SpecialTextColour fromEither(Either<Integer, String> either) {
@@ -108,6 +111,9 @@ public class SpecialTextColour {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         SpecialTextColour that = (SpecialTextColour) o;
+        if(this.isSignText && that.isSignText) {
+            return Objects.equals(this.dyeColor, that.dyeColor) && isGlowingSignText == that.isGlowingSignText && isGlowingOutline == that.isGlowingOutline;
+        }
         return isSignText == that.isSignText && isGlowingSignText == that.isGlowingSignText && isGlowingOutline == that.isGlowingOutline && compareColour(that.colourValueOrName);
     }
 

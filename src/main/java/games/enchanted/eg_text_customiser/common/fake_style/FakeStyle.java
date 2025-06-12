@@ -30,10 +30,6 @@ public record FakeStyle(
         this(colour, shadowColour, bold, italic, underlined, strikethrough, obfuscated, font, ColourOverrideDefinition.PropertiesPart.DEFAULT);
     }
 
-    public static FakeStyle fromSignTextData(SignTextData signTextData, boolean isGlowingOutline) {
-        return new FakeStyle(SpecialTextColour.fromSignTextData(signTextData, isGlowingOutline), null, null, null, null, null, null, null, ColourOverrideDefinition.PropertiesPart.DEFAULT);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof FakeStyle fakeStyle)) return false;
