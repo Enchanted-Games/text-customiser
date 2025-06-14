@@ -23,7 +23,7 @@ public class ColourOverrideReloadListener extends SimpleJsonResourceReloadListen
 {
     public static final ResourceLocation LOCATION = ResourceLocationUtil.ofMod("text");
 
-    private static final FileToIdConverter LISTER = FileToIdConverter.json("eg_text_customiser/colour_overrides");
+    private static final FileToIdConverter LISTER = FileToIdConverter.json("eg_text_customiser/color_overrides");
 
     public ColourOverrideReloadListener() {
         super(ColourOverrideDefinition.CODEC, LISTER);

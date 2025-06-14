@@ -6,29 +6,28 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import games.enchanted.eg_text_customiser.common.Logging;
-import games.enchanted.eg_text_customiser.common.duck.StyleAdditions;
 import games.enchanted.eg_text_customiser.common.fake_style.FakeStyle;
 import games.enchanted.eg_text_customiser.common.fake_style.SpecialTextColour;
 import games.enchanted.eg_text_customiser.common.pack.property_tests.ColourPredicateTest;
+import games.enchanted.eg_text_customiser.common.pack.property_tests.FontPredicateTest;
 import games.enchanted.eg_text_customiser.common.pack.property_tests.SimpleEqualityTest;
 import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.ColourPredicates;
 import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.predicates.BasicColourPredicate;
 import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.predicates.ColourPredicate;
+import games.enchanted.eg_text_customiser.common.pack.property_tests.font.FontPredicates;
+import games.enchanted.eg_text_customiser.common.pack.property_tests.font.predicates.FontPredicate;
 import games.enchanted.eg_text_customiser.common.serialization.ColourCodecs;
-import games.enchanted.eg_text_customiser.common.util.ColourUtil;
-import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.profiling.Profiler;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
 public class ColourOverrideDefinition {
     public static final Codec<List<ColourPredicate>> COLOUR_PREDICATE_LIST_CODEC = ExtraCodecs.compactListCodec(ColourPredicates.CODEC);
+    public static final Codec<List<FontPredicate>> FONT_PREDICATE_LIST_CODEC = ExtraCodecs.compactListCodec(FontPredicates.CODEC);
 
     public static final Codec<ColourOverrideDefinition> CODEC = RecordCodecBuilder.create((RecordCodecBuilder.Instance<ColourOverrideDefinition> instance) ->
         instance.group(
@@ -53,7 +52,7 @@ public class ColourOverrideDefinition {
     final SimpleEqualityTest<Boolean> underlinedTester;
     final SimpleEqualityTest<Boolean> strikethroughTester;
     final SimpleEqualityTest<Boolean> obfuscatedTester;
-    final SimpleEqualityTest<ResourceLocation> fontTester;
+    @Nullable final List<FontPredicateTest> fontTests;
 
     public ColourOverrideDefinition(PropertiesPart propertiesPart, WhenPart whenPart, ReplaceWithPart replaceWithPart) {
         this.properties = propertiesPart;
@@ -67,7 +66,7 @@ public class ColourOverrideDefinition {
         this.underlinedTester = new SimpleEqualityTest<>(whenPart.underlined);
         this.strikethroughTester = new SimpleEqualityTest<>(whenPart.strikethrough);
         this.obfuscatedTester = new SimpleEqualityTest<>(whenPart.obfuscated);
-        this.fontTester = new SimpleEqualityTest<>(whenPart.font);
+        this.fontTests = whenPart.font;
 
         tests = List.of(
             (style) -> {
@@ -89,7 +88,12 @@ public class ColourOverrideDefinition {
             (style) -> this.underlinedTester.matches(style.underlined()),
             (style) -> this.strikethroughTester.matches(style.strikethrough()),
             (style) -> this.obfuscatedTester.matches(style.obfuscated()),
-            (style) -> this.fontTester.matches(style.font())
+            (style) -> {
+                if(this.fontTests == null || this.fontTests.isEmpty()) {
+                    return true;
+                }
+                return this.fontTests.stream().anyMatch(test -> test.matches(style.font()));
+            }
         );
     }
 
@@ -148,7 +152,7 @@ public class ColourOverrideDefinition {
         );
     }
 
-    public record WhenPart(@Nullable List<ColourPredicateTest> colour, @Nullable List<ColourPredicateTest> shadowColour, @Nullable Boolean bold, @Nullable Boolean italic, @Nullable Boolean underlined, @Nullable Boolean strikethrough, @Nullable Boolean obfuscated, @Nullable ResourceLocation font) {
+    public record WhenPart(@Nullable List<ColourPredicateTest> colour, @Nullable List<ColourPredicateTest> shadowColour, @Nullable Boolean bold, @Nullable Boolean italic, @Nullable Boolean underlined, @Nullable Boolean strikethrough, @Nullable Boolean obfuscated, @Nullable List<FontPredicateTest> font) {
         private static final Codec<WhenPart> CODEC = RecordCodecBuilder.create((RecordCodecBuilder.Instance<WhenPart> instance) ->
             instance.group(
                 COLOUR_PREDICATE_LIST_CODEC.optionalFieldOf("color").forGetter((part) -> Optional.ofNullable(ColourPredicateTest.testsToPredicates(part.colour))),
@@ -158,9 +162,9 @@ public class ColourOverrideDefinition {
                 Codec.BOOL.optionalFieldOf("underlined").forGetter(part -> Optional.ofNullable(part.underlined)),
                 Codec.BOOL.optionalFieldOf("strikethrough").forGetter(part -> Optional.ofNullable(part.strikethrough)),
                 Codec.BOOL.optionalFieldOf("obfuscated").forGetter(part -> Optional.ofNullable(part.obfuscated)),
-                ResourceLocation.CODEC.optionalFieldOf("font").forGetter(part -> Optional.ofNullable(part.font))
+                FONT_PREDICATE_LIST_CODEC.optionalFieldOf("font").forGetter(part -> Optional.ofNullable(FontPredicateTest.testsToPredicates(part.font)))
             ).apply(
-                instance, (Optional<List<ColourPredicate>> colour, Optional<List<ColourPredicate>> shadowColour, Optional<Boolean> bold, Optional<Boolean> italic, Optional<Boolean> underlined, Optional<Boolean> strikethrough, Optional<Boolean> obfuscated, Optional<ResourceLocation> font) -> new WhenPart(
+                instance, (Optional<List<ColourPredicate>> colour, Optional<List<ColourPredicate>> shadowColour, Optional<Boolean> bold, Optional<Boolean> italic, Optional<Boolean> underlined, Optional<Boolean> strikethrough, Optional<Boolean> obfuscated, Optional<List<FontPredicate>> font) -> new WhenPart(
                     ColourPredicateTest.predicatesToTests(colour.orElse(null)),
                     ColourPredicateTest.predicatesToTests(shadowColour.orElse(null)),
                     bold.orElse(null),
@@ -168,7 +172,7 @@ public class ColourOverrideDefinition {
                     underlined.orElse(null),
                     strikethrough.orElse(null),
                     obfuscated.orElse(null),
-                    font.orElse(null)
+                    FontPredicateTest.predicatesToTests(font.orElse(null))
                 )
             )
         );
@@ -177,8 +181,8 @@ public class ColourOverrideDefinition {
     public record ReplaceWithPart(@Nullable Integer colour, @Nullable Integer shadowColour) {
         public static final Codec<ReplaceWithPart> CODEC = RecordCodecBuilder.create((RecordCodecBuilder.Instance<ReplaceWithPart> instance) ->
             instance.group(
-                ColourCodecs.RGB_HEX_CODEC.optionalFieldOf("color").forGetter((part) -> Optional.ofNullable(part.colour)),
-                ColourCodecs.RGB_HEX_CODEC.optionalFieldOf("shadow_color").forGetter(part -> Optional.ofNullable(part.shadowColour))
+                ColourCodecs.HEX_OR_RGB_LIST_CODEC.optionalFieldOf("color").forGetter((part) -> Optional.ofNullable(part.colour)),
+                ColourCodecs.HEX_OR_RGB_LIST_CODEC.optionalFieldOf("shadow_color").forGetter(part -> Optional.ofNullable(part.shadowColour))
             )
             .apply(
                 instance, (Optional<Integer> colour, Optional<Integer> shadowColour) -> new ReplaceWithPart(
