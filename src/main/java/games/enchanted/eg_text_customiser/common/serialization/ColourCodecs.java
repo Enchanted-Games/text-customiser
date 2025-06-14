@@ -51,7 +51,7 @@ public class ColourCodecs {
         input -> {
             ChatFormatting formatting = ChatFormatting.getByName(input);
             if(formatting == null) {
-                return DataResult.error(() -> "Invalid colour! Must start with a `#` or be a named colour. Value '" + input + "' not valid");
+                return DataResult.error(() -> "Invalid named colour! Value '" + input + "' not a valid named colour.");
             }
             if(formatting.isColor()) {
                 return DataResult.success(input);

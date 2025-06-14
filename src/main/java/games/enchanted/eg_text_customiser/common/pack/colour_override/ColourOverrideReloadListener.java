@@ -1,32 +1,29 @@
 package games.enchanted.eg_text_customiser.common.pack.colour_override;
 
 import games.enchanted.eg_text_customiser.common.Logging;
+import games.enchanted.eg_text_customiser.common.ModConstants;
 import games.enchanted.eg_text_customiser.common.pack.TextOverrideManager;
+import games.enchanted.eg_text_customiser.common.pack.reload_listener.JsonReloadListener;
 import games.enchanted.eg_text_customiser.common.util.ResourceLocationUtil;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.toasts.SystemToast;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-//? if fabric {
-import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
-//?}
-
-public class ColourOverrideReloadListener extends SimpleJsonResourceReloadListener<ColourOverrideDefinition>
-//? if fabric {
-    implements IdentifiableResourceReloadListener
-//?}
+public class ColourOverrideReloadListener extends JsonReloadListener<ColourOverrideDefinition>
 {
-    public static final ResourceLocation LOCATION = ResourceLocationUtil.ofMod("text");
+    public static final ResourceLocation NAME = ResourceLocationUtil.ofMod("colour_override_listener");
 
     private static final FileToIdConverter LISTER = FileToIdConverter.json("eg_text_customiser/color_overrides");
 
     public ColourOverrideReloadListener() {
-        super(ColourOverrideDefinition.CODEC, LISTER);
+        super(ColourOverrideDefinition.CODEC, LISTER, NAME);
     }
 
     @Override
@@ -37,14 +34,13 @@ public class ColourOverrideReloadListener extends SimpleJsonResourceReloadListen
     }
 
     @Override
-    public @NotNull String getName() {
-        return LOCATION.toString();
+    protected void showErrors(Map<ResourceLocation, Exception> erroredFiles) {
+        if(erroredFiles.isEmpty()) return;
+        SystemToast.addOrUpdate(
+            Minecraft.getInstance().getToastManager(),
+            ModConstants.RELOAD_FAILED_TOAST,
+            Component.translatableWithFallback("eg_text_customiser.toast.override_reload_failure.title", "Text Customiser").withStyle(Style.EMPTY.withBold(true)),
+            Component.translatableWithFallback("eg_text_customiser.toast.override_reload_failure.desc", "Some Colour Overrides failed to load. See output log for more info")
+        );
     }
-
-    //? if fabric {
-    @Override
-    public ResourceLocation getFabricId() {
-        return LOCATION;
-    }
-    //?}
 }
