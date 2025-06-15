@@ -2,6 +2,8 @@ package games.enchanted.eg_text_customiser.common.util;
 
 import org.xml.sax.helpers.ParserAdapter;
 
+import java.util.Locale;
+
 public class ColourUtil {
     public static int clampInt(int val, int min, int max) {
         return Math.max(min, Math.min(max, val));
@@ -78,5 +80,9 @@ public class ColourUtil {
     public static int darkenRGB(int rgb, float scale) {
         int[] rgbParts = RGBint_to_RGB(rgb);
         return RGB_to_RGBint((int) (rgbParts[0] * scale), (int) (rgbParts[1] * scale), (int) (rgbParts[2] * scale));
+    }
+
+    public static String formatIntAsHexString(int colour) {
+        return String.format(Locale.ROOT, "#%06X", colour);
     }
 }

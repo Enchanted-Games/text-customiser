@@ -23,6 +23,11 @@ public class TextOverrideManager {
     private static final Map<FakeStyle, FakeStyle> MATCHED_STYLES = new HashMap<>();
     private static final HashSet<FakeStyle> UNMATCHED_STYLED = new HashSet<>();
 
+    private static void logStyle(FakeStyle style, @Nullable ResourceLocation matchedTo) {
+        String matchedPart = matchedTo != null ? "(and matched to '" + matchedTo + "')" : "(didn't match)";
+        Logging.info("Seen {} style:\n{}", matchedPart, style.formattedString());
+    }
+
     private static @Nullable ColourOverrideDefinition getDefinitionForStyle(@NotNull FakeStyle style) {
         Profiling.push("eg_text_customiser:check_unmatched");
         if(UNMATCHED_STYLED.contains(style)) {
@@ -35,7 +40,7 @@ public class TextOverrideManager {
         for (Map.Entry<ResourceLocation, ColourOverrideDefinition> entry : COLOUR_OVERRIDE_DEFINITIONS.entrySet()) {
             Profiling.push("eg_text_customiser:check_match");
             if(entry.getValue().styleMatches(style)) {
-                Logging.info("Seen (and matched): [colour: {}, shadow_color: {}]", style.colour().safeGetAsRGB(), style.shadowColour());
+                logStyle(style, entry.getKey());
                 MATCHED_STYLES.put(style, entry.getValue().applyToStyle(style));
                 Profiling.pop();
                 return entry.getValue();
@@ -44,7 +49,7 @@ public class TextOverrideManager {
         }
         Profiling.pop();
 
-        Logging.info("Seen (didn't match): [colour: {}, shadow_color: {}]", style.colour().safeGetAsRGB(), style.shadowColour());
+        logStyle(style, null);
         UNMATCHED_STYLED.add(style);
         return null;
     }

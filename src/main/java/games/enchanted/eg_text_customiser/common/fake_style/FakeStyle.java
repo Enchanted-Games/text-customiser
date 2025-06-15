@@ -1,7 +1,9 @@
 package games.enchanted.eg_text_customiser.common.fake_style;
 
 import games.enchanted.eg_text_customiser.common.pack.colour_override.ColourOverrideDefinition;
+import games.enchanted.eg_text_customiser.common.util.ColourUtil;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -39,5 +41,33 @@ public record FakeStyle(
     @Override
     public int hashCode() {
         return Objects.hash(colour, shadowColour, bold, italic, underlined, strikethrough, obfuscated, font, properties);
+    }
+
+    @Override
+    public @NotNull String toString() {
+        return "FakeStyle{" +
+            "colour=" + colour +
+            ", shadowColour=" + shadowColour +
+            ", bold=" + bold +
+            ", italic=" + italic +
+            ", underlined=" + underlined +
+            ", strikethrough=" + strikethrough +
+            ", obfuscated=" + obfuscated +
+            ", font=" + font +
+            ", properties=" + properties +
+        '}';
+    }
+
+    public @NotNull String formattedString() {
+        return "[" +
+            (colour == null ? "" : "color=\"" + colour.formattedString() + "\"") +
+            (shadowColour == null ? "" : ", shadow_color=\"" + ColourUtil.formatIntAsHexString(shadowColour) + "\"") +
+            (bold == null ? "" : ", bold=" + bold) +
+            (italic == null ? "" : ", italic=" + italic) +
+            (underlined == null ? "" : ", underlined=" + underlined) +
+            (strikethrough == null ? "" : ", strikethrough=" + strikethrough) +
+            (obfuscated == null ? "" : ", obfuscated=" + obfuscated) +
+            (font == null ? "" : ", font=\"" + font + "\"") +
+        ']';
     }
 }

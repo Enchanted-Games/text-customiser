@@ -3,6 +3,7 @@ package games.enchanted.eg_text_customiser.common.fake_style;
 
 import com.mojang.datafixers.util.Either;
 import games.enchanted.eg_text_customiser.common.mixin.accessor.TextColorAccess;
+import games.enchanted.eg_text_customiser.common.util.ColourUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.item.DyeColor;
@@ -124,5 +125,35 @@ public class SpecialTextColour {
     @Override
     public int hashCode() {
         return Objects.hash(colourValueOrName, isSignText, isGlowingSignText, isGlowingOutline);
+    }
+
+    @Override
+    public @NotNull String toString() {
+        return "SpecialTextColour{" +
+            "colourValueOrName=" + colourValueOrName +
+            ", isSignText=" + isSignText +
+            ", isGlowingSignText=" + isGlowingSignText +
+            ", isGlowingOutline=" + isGlowingOutline +
+            ", dyeColor=" + dyeColor +
+        '}';
+    }
+
+
+    public String formattedString() {
+        if(isSignText) {
+            return "{" +
+                "dye=" + (dyeColor == null ? "<null>" : dyeColor.getName()) +
+                ", glowing=" + isGlowingSignText +
+                ", is_glowing_outline=" + isGlowingOutline +
+            "}";
+        }
+
+        if(colourValueOrName.left().isPresent()) {
+            return ColourUtil.formatIntAsHexString(colourValueOrName.left().get());
+        } else if(colourValueOrName.right().isPresent()) {
+            return colourValueOrName.right().get();
+        }
+
+        return toString();
     }
 }
