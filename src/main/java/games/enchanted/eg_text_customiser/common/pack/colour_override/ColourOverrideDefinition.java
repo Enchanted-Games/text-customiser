@@ -77,12 +77,16 @@ public class ColourOverrideDefinition {
                 return this.colourTests.stream().anyMatch(test -> test.matches(style.colour()));
             },
             (style) -> {
+                //? if minecraft: >= 1.21.5 {
                 if (this.shadowColourTests == null || this.shadowColourTests.isEmpty()) {
                     return true;
                 }
                 return this.shadowColourTests.stream().anyMatch(test -> test.matches(
                     style.shadowColour() == null ? null : new SpecialTextColour(style.shadowColour())
                 ));
+                //?} else {
+                /*return true;
+                *///?}
             },
             (style) -> this.boldTester.matches(style.bold()),
             (style) -> this.italicTester.matches(style.italic()),

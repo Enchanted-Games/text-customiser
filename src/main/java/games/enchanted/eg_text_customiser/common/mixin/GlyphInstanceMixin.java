@@ -2,7 +2,6 @@
 package games.enchanted.eg_text_customiser.common.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Pseudo;
 
 //? if minecraft: >= 1.21.5 {
 import games.enchanted.eg_text_customiser.common.pack.TextOverrideManager;
@@ -16,8 +15,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 //?}
 
-@Pseudo
-@Mixin(BakedGlyph.GlyphInstance.class)
+// needs to be a string reference so <1.21.1 can compile
+@Mixin(targets = "net.minecraft.client.gui.font.glyphs.BakedGlyph$GlyphInstance")
 public abstract class GlyphInstanceMixin {
     //? if minecraft: >= 1.21.5 {
     @Mutable @Shadow @Final private int shadowColor;
