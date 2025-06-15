@@ -1,0 +1,22 @@
+package games.enchanted.eg_text_customiser.common.util;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.profiling.Profiler;
+
+public class Profiling {
+    public static void push(String name) {
+        //? if minecraft: <= 1.21.4 {
+        //Minecraft.getInstance().getProfiler().push(name);
+        //?} else {
+        Profiler.get().push(name);
+        //
+    }
+
+    public static void pop() {
+        //? if minecraft: <= 1.21.4 {
+        //Minecraft.getInstance().getProfiler().pop();
+        //?} else {
+        Profiler.get().pop();
+        //
+    }
+}

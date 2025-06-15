@@ -12,7 +12,21 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(Style.class)
 public interface StyleInvoker {
     @Invoker("<init>")
-    static Style eg_text_customiser$invokeInit(@Nullable TextColor color, @Nullable Integer shadowColor, @Nullable Boolean bold, @Nullable Boolean italic, @Nullable Boolean underlined, @Nullable Boolean strikethrough, @Nullable Boolean obfuscated, @Nullable ClickEvent clickEvent, @Nullable HoverEvent hoverEvent, @Nullable String insertion, @Nullable ResourceLocation font) {
+    static Style eg_text_customiser$invokeInit(
+        @Nullable TextColor color,
+        //? if minecraft: >= 1.21.4 {
+        @Nullable Integer shadowColor,
+         //?}
+        @Nullable Boolean bold,
+        @Nullable Boolean italic,
+        @Nullable Boolean underlined,
+        @Nullable Boolean strikethrough,
+        @Nullable Boolean obfuscated,
+        @Nullable ClickEvent clickEvent,
+        @Nullable HoverEvent hoverEvent,
+        @Nullable String insertion,
+        @Nullable ResourceLocation font
+    ) {
         throw new AssertionError("eg_text_customiser$invokeInit not asserted");
     }
 }

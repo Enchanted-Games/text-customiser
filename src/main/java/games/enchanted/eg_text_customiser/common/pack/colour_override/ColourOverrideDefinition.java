@@ -17,8 +17,9 @@ import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.pred
 import games.enchanted.eg_text_customiser.common.pack.property_tests.font.FontPredicates;
 import games.enchanted.eg_text_customiser.common.pack.property_tests.font.predicates.FontPredicate;
 import games.enchanted.eg_text_customiser.common.serialization.ColourCodecs;
+import games.enchanted.eg_text_customiser.common.serialization.ModCodecs;
+import games.enchanted.eg_text_customiser.common.util.Profiling;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraft.util.profiling.Profiler;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -26,8 +27,8 @@ import java.util.Optional;
 import java.util.function.Function;
 
 public class ColourOverrideDefinition {
-    public static final Codec<List<ColourPredicate>> COLOUR_PREDICATE_LIST_CODEC = ExtraCodecs.compactListCodec(ColourPredicates.CODEC);
-    public static final Codec<List<FontPredicate>> FONT_PREDICATE_LIST_CODEC = ExtraCodecs.compactListCodec(FontPredicates.CODEC);
+    public static final Codec<List<ColourPredicate>> COLOUR_PREDICATE_LIST_CODEC = ModCodecs.singleOrListCodec(ColourPredicates.CODEC);
+    public static final Codec<List<FontPredicate>> FONT_PREDICATE_LIST_CODEC = ModCodecs.singleOrListCodec(FontPredicates.CODEC);
 
     public static final Codec<ColourOverrideDefinition> CODEC = RecordCodecBuilder.create((RecordCodecBuilder.Instance<ColourOverrideDefinition> instance) ->
         instance.group(
@@ -98,14 +99,14 @@ public class ColourOverrideDefinition {
     }
 
     public boolean styleMatches(FakeStyle style) {
-        Profiler.get().push("eg_text_customiser:check_style_matches");
+        Profiling.push("eg_text_customiser:check_style_matches");
         boolean result = tests.stream().allMatch(test -> test.apply(style));
-        Profiler.get().pop();
+        Profiling.pop();
         return result;
     }
 
     public FakeStyle applyToStyle(FakeStyle style) {
-        Profiler.get().push("eg_text_customiser:apply_to_style");
+        Profiling.push("eg_text_customiser:apply_to_style");
         FakeStyle newStyle = new FakeStyle(
             replacement.colour == null ? style.colour() : new SpecialTextColour(replacement.colour),
             replacement.shadowColour == null ? style.shadowColour() : replacement.shadowColour,
@@ -117,7 +118,7 @@ public class ColourOverrideDefinition {
             style.font(),
             properties
         );
-        Profiler.get().pop();
+        Profiling.pop();
         return newStyle;
     }
 
@@ -144,7 +145,7 @@ public class ColourOverrideDefinition {
         private static final Codec<PropertiesPart> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
                 Codec.BOOL.optionalFieldOf("auto_generate_shadow", AUTO_GENERATE_SHADOW_DEFAULT).forGetter(part -> part.autoGenerateShadow),
-                ExtraCodecs.floatRange(0, 1).optionalFieldOf("auto_shadow_multiplier", AUTO_SHADOW_MULTIPLIER_DEFAULT).forGetter(part -> part.autoShadowMultiplier),
+                ExtraCodecs.POSITIVE_FLOAT.optionalFieldOf("auto_shadow_multiplier", AUTO_SHADOW_MULTIPLIER_DEFAULT).forGetter(part -> part.autoShadowMultiplier),
                 Codec.BOOL.optionalFieldOf("force_enable_shadow", FORCE_ENABLE_SHADOW_DEFAULT).forGetter(part -> part.forceEnableShadow)
             ).apply(
                 instance, PropertiesPart::new

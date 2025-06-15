@@ -2,13 +2,16 @@ package games.enchanted.eg_text_customiser.common.mixin;
 
 import games.enchanted.eg_text_customiser.common.duck.StyleAdditions;
 import games.enchanted.eg_text_customiser.common.fake_style.SignTextData;
+//? if minecraft: <= 1.21.4 {
+/*import net.minecraft.client.renderer.blockentity.SignRenderer;
+*///?} else {
 import net.minecraft.client.renderer.blockentity.AbstractSignRenderer;
+//?}
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.entity.SignText;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,7 +19,6 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Mixin(SignText.class)
 public abstract class SignTextMixin {
@@ -39,10 +41,18 @@ public abstract class SignTextMixin {
             }
 
             SignTextData signTextData;
+
+            int darkColour =
+                //? if minecraft: <= 1.21.4 {
+                /*SignRenderer.getDarkColor((SignText) (Object) this);
+                *///?} else {
+                AbstractSignRenderer.getDarkColor((SignText) (Object) this);
+                //?}
+
             if(this.hasGlowingText()) {
-                signTextData = new SignTextData(this.getColor(), this.hasGlowingText(), this.getColor().getTextColor(), AbstractSignRenderer.getDarkColor((SignText) (Object) this));
+                signTextData = new SignTextData(this.getColor(), this.hasGlowingText(), this.getColor().getTextColor(), darkColour);
             } else {
-                signTextData = new SignTextData(this.getColor(), this.hasGlowingText(), AbstractSignRenderer.getDarkColor((SignText) (Object) this), null);
+                signTextData = new SignTextData(this.getColor(), this.hasGlowingText(), darkColour, null);
             }
 
             Style style = mutableComponent.getStyle();

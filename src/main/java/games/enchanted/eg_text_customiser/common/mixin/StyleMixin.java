@@ -21,7 +21,9 @@ import java.util.Optional;
 public abstract class StyleMixin implements StyleAdditions {
     @Unique @Nullable private SignTextData eg_text_customiser$signTextData = null;
 
+    //? if minecraft: >= 1.21.4 {
     @Mutable @Shadow @Final Integer shadowColor;
+    //?}
     @Shadow @Final @Nullable TextColor color;
     @Shadow @Final @Nullable Boolean bold;
     @Shadow @Final @Nullable Boolean italic;
@@ -34,11 +36,46 @@ public abstract class StyleMixin implements StyleAdditions {
     @Shadow @Final @Nullable ResourceLocation font;
 
     @WrapOperation(
-        at = @At(value = "NEW", target = "(Lnet/minecraft/network/chat/TextColor;Ljava/lang/Integer;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Lnet/minecraft/network/chat/ClickEvent;Lnet/minecraft/network/chat/HoverEvent;Ljava/lang/String;Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/network/chat/Style;"),
+        at = @At(value = "NEW", target =
+            //? if minecraft: >= 1.21.4 {
+            "(Lnet/minecraft/network/chat/TextColor;Ljava/lang/Integer;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Lnet/minecraft/network/chat/ClickEvent;Lnet/minecraft/network/chat/HoverEvent;Ljava/lang/String;Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/network/chat/Style;"
+            //?} else {
+            /*"(Lnet/minecraft/network/chat/TextColor;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Lnet/minecraft/network/chat/ClickEvent;Lnet/minecraft/network/chat/HoverEvent;Ljava/lang/String;Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/network/chat/Style;"
+            *///?}
+        ),
         method = "*"
     )
-    private Style eg_text_customiser$initialiseFieldsOnNewInstance(@Nullable TextColor color, @Nullable Integer shadowColor, @Nullable Boolean bold, @Nullable Boolean italic, @Nullable Boolean underlined, @Nullable Boolean strikethrough, @Nullable Boolean obfuscated, @Nullable ClickEvent clickEvent, @Nullable HoverEvent hoverEvent, @Nullable String insertion, @Nullable ResourceLocation font, Operation<Style> original) {
-        Style newStyle = original.call(color, shadowColor, bold, italic, underlined, strikethrough, obfuscated, clickEvent, hoverEvent, insertion, font);
+    private Style eg_text_customiser$initialiseFieldsOnNewInstance(
+        @Nullable TextColor color,
+        //? if minecraft: >= 1.21.4 {
+        @Nullable Integer shadowColor,
+        //?}
+        @Nullable Boolean bold,
+        @Nullable Boolean italic,
+        @Nullable Boolean underlined,
+        @Nullable Boolean strikethrough,
+        @Nullable Boolean obfuscated,
+        @Nullable ClickEvent clickEvent,
+        @Nullable HoverEvent hoverEvent,
+        @Nullable String insertion,
+        @Nullable ResourceLocation font,
+        Operation<Style> original
+    ) {
+        Style newStyle = original.call(
+            color,
+            //? if minecraft: >= 1.21.4 {
+            shadowColor,
+            //?}
+            bold,
+            italic,
+            underlined,
+            strikethrough,
+            obfuscated,
+            clickEvent,
+            hoverEvent,
+            insertion,
+            font
+        );
         ((StyleAdditions) newStyle).eg_text_customiser$setSignTextData(this.eg_text_customiser$getSignTextData());
         return newStyle;
     }
@@ -57,7 +94,21 @@ public abstract class StyleMixin implements StyleAdditions {
 
     @Override
     public Style eg_text_customiser$withSignTextData(SignTextData signTextData) {
-        Style newStyle = StyleInvoker.eg_text_customiser$invokeInit(this.color, this.shadowColor, this.bold, this.italic, this.underlined, this.strikethrough, this.obfuscated, this.clickEvent, this.hoverEvent, this.insertion, this.font);
+        Style newStyle = StyleInvoker.eg_text_customiser$invokeInit(
+            this.color,
+            //? if minecraft: >= 1.21.4 {
+            this.shadowColor,
+             //?}
+            this.bold,
+            this.italic,
+            this.underlined,
+            this.strikethrough,
+            this.obfuscated,
+            this.clickEvent,
+            this.hoverEvent,
+            this.insertion,
+            this.font
+        );
         ((StyleAdditions) newStyle).eg_text_customiser$setSignTextData(signTextData);
         return newStyle;
     }

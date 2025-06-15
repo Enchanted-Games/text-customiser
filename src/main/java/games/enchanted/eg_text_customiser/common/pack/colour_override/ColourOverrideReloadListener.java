@@ -37,7 +37,11 @@ public class ColourOverrideReloadListener extends JsonReloadListener<ColourOverr
     protected void showErrors(Map<ResourceLocation, Exception> erroredFiles) {
         if(erroredFiles.isEmpty()) return;
         SystemToast.addOrUpdate(
+            //? if minecraft: <= 1.21.4 {
+            /*Minecraft.getInstance().getToasts(),
+            *///?} else {
             Minecraft.getInstance().getToastManager(),
+            //?}
             ModConstants.RELOAD_FAILED_TOAST,
             Component.translatableWithFallback("eg_text_customiser.toast.override_reload_failure.title", "Text Customiser").withStyle(Style.EMPTY.withBold(true)),
             Component.translatableWithFallback("eg_text_customiser.toast.override_reload_failure.desc", "Some Colour Overrides failed to load. See output log for more info")

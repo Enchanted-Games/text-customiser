@@ -6,12 +6,12 @@ import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.pred
 import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.predicates.ColourPredicate;
 import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.predicates.RangeColourPredicate;
 import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.predicates.SignDyeColourPredicate;
+import games.enchanted.eg_text_customiser.common.serialization.ModCodecs;
 import games.enchanted.eg_text_customiser.common.util.ResourceLocationUtil;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.ExtraCodecs;
 
 public class ColourPredicates {
-    private static final ExtraCodecs.LateBoundIdMapper<ResourceLocation, MapCodec<? extends ColourPredicate>> COLOUR_PREDICATES_MAPPER = new ExtraCodecs.LateBoundIdMapper<>();
+    private static final ModCodecs.IdToElmMapper<ResourceLocation, MapCodec<? extends ColourPredicate>> COLOUR_PREDICATES_MAPPER = new ModCodecs.IdToElmMapper<>();
     public static final Codec<ColourPredicate> CODEC = Codec.withAlternative(
         COLOUR_PREDICATES_MAPPER.codec(ResourceLocation.CODEC).dispatch(ColourPredicate::codec, mapCodec -> mapCodec),
         BasicColourPredicate.CODEC

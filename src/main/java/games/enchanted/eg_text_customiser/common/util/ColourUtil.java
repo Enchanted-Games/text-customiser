@@ -74,4 +74,9 @@ public class ColourUtil {
         int b = rgb & 0xFF;
         return new int[]{r, g, b};
     }
+
+    public static int darkenRGB(int rgb, float scale) {
+        int[] rgbParts = RGBint_to_RGB(rgb);
+        return RGB_to_RGBint((int) (rgbParts[0] * scale), (int) (rgbParts[1] * scale), (int) (rgbParts[2] * scale));
+    }
 }
