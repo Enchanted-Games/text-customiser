@@ -21,6 +21,7 @@ public abstract class GlyphInstanceMixin {
     //? if minecraft: >= 1.21.5 {
     @Mutable @Shadow @Final private int shadowColor;
     @Mutable @Shadow @Final private int color;
+    @Mutable @Shadow @Final private float x;
 
     @Shadow abstract boolean hasShadow();
 

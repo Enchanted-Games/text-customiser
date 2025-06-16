@@ -101,6 +101,10 @@ public class SpecialTextColour {
         return dyeColor;
     }
 
+    public boolean isNamedColour() {
+        return colourValueOrName.right().isPresent();
+    }
+
     private boolean compareColour(Either<Integer, String> comparison) {
         if(colourValueOrName.left().isPresent() && comparison.left().isPresent()) {
             // integer comparison
