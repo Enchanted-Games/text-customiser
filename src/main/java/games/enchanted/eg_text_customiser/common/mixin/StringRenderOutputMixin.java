@@ -1,27 +1,34 @@
 package games.enchanted.eg_text_customiser.common.mixin;
 
-import org.spongepowered.asm.mixin.Mixin;
-
-//? if minecraft: <= 1.21.4 {
-/*import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import games.enchanted.eg_text_customiser.common.pack.TextOverrideManager;
-import games.enchanted.eg_text_customiser.common.util.ColourUtil;
+import games.enchanted.eg_text_customiser.common.duck.EffectAdditions;
+import games.enchanted.eg_text_customiser.common.fake_style.DecorationType;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.font.glyphs.BakedGlyph;
+import org.spongepowered.asm.mixin.Mixin;
 import net.minecraft.network.chat.Style;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Coerce;
+
+//? if minecraft: <= 1.21.4 {
+
+/*import com.mojang.blaze3d.vertex.VertexConsumer;
+import games.enchanted.eg_text_customiser.common.pack.TextOverrideManager;
+import games.enchanted.eg_text_customiser.common.util.ColourUtil;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
 *///?}
 
 @Mixin(targets = "net.minecraft.client.gui.Font$StringRenderOutput")
 public class StringRenderOutputMixin {
     //? if minecraft: <= 1.21.4 {
-    /*@Shadow @Final private boolean dropShadow;
+    /*// this whole mixin for 1.21.1 is so cursed
+
+    @Shadow @Final private boolean dropShadow;
 
     @WrapOperation(
         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Font;renderChar(Lnet/minecraft/client/gui/font/glyphs/BakedGlyph;ZZFFFLorg/joml/Matrix4f;Lcom/mojang/blaze3d/vertex/VertexConsumer;FFFFI)V"),
@@ -45,17 +52,15 @@ public class StringRenderOutputMixin {
         Operation<Void> original,
         @Local(ordinal = 0, argsOnly = true) Style style
     ) {
-        // i hate this so much
         final int[][] newColour = {new int[4]};
-        float dimFac = !dropShadow ? 0.25f : 1f;
-        final int shadowColour = ColourUtil.ARGB_to_ARGBint((int) (alpha * 255), (int) ((red * dimFac) * 255), (int) ((green * dimFac) * 255), (int) ((blue * dimFac) * 255));
-        float dimFac2 = !dropShadow ? 1f : 4f;
-        final int mainColour = ColourUtil.ARGB_to_ARGBint((int) (alpha * 255), (int) ((red * dimFac2) * 255), (int) ((green * dimFac2) * 255), (int) ((blue * dimFac2) * 255));
+        final int mainColour = ColourUtil.calcMainColour(dropShadow, alpha, red, green, blue);
+        final int shadowColour = ColourUtil.calcShadowColour(dropShadow, alpha, red, green, blue);
         TextOverrideManager.replaceColour(
             mainColour,
             shadowColour,
             style,
             true,
+            DecorationType.NONE,
             colourARGB -> {
                 if(!dropShadow) {
                     newColour[0] = ColourUtil.ARGBint_to_ARGB(colourARGB);
@@ -69,5 +74,24 @@ public class StringRenderOutputMixin {
         );
         original.call(instance, glyph, bold, italic, boldOffset, x, y, matrix, buffer, newColour[0][1] / 255f, newColour[0][2] / 255f, newColour[0][3] / 255f, newColour[0][0] / 255f, packedLight);
     }
-    *///?}
+
+    @WrapOperation(
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Font$StringRenderOutput;addEffect(Lnet/minecraft/client/gui/font/glyphs/BakedGlyph$Effect;)V"),
+        method = "accept"
+    )
+    private void eg_text_customiser$(@Coerce Object instance, BakedGlyph.Effect effect, Operation<Void> original, @Local(argsOnly = true) Style style) {
+        ((EffectAdditions) effect).eg_text_customiser$applyEffectOverride(style, DecorationType.fromStyle(style), this.dropShadow);
+        original.call(instance, effect);
+    }
+    *///?} else {
+
+    @WrapOperation(
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Font$StringRenderOutput;addEffect(Lnet/minecraft/client/gui/font/glyphs/BakedGlyph$Effect;)V"),
+        method = "accept"
+    )
+    private void eg_text_customiser$(@Coerce Object instance, BakedGlyph.Effect effect, Operation<Void> original, @Local(argsOnly = true) Style style) {
+        ((EffectAdditions) (Object) effect).eg_text_customiser$applyEffectOverride(style, DecorationType.fromStyle(style), false);
+        original.call(instance, effect);
+    }
+    //?}
 }

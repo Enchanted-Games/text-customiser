@@ -2,6 +2,7 @@ package games.enchanted.eg_text_customiser.common.pack;
 
 import games.enchanted.eg_text_customiser.common.Logging;
 import games.enchanted.eg_text_customiser.common.duck.StyleAdditions;
+import games.enchanted.eg_text_customiser.common.fake_style.DecorationType;
 import games.enchanted.eg_text_customiser.common.fake_style.FakeStyle;
 import games.enchanted.eg_text_customiser.common.fake_style.SignTextData;
 import games.enchanted.eg_text_customiser.common.fake_style.SpecialTextColour;
@@ -86,7 +87,7 @@ public class TextOverrideManager {
         UNMATCHED_STYLED.clear();
     }
 
-    public static void replaceColour(int color, int shadowColor, Style style, boolean hasShadow, ColourApplier colourApplier, ShadowColourApplier shadowColourApplier) {
+    public static void replaceColour(int color, int shadowColor, Style style, boolean hasShadow, DecorationType decorationType, ColourApplier colourApplier, ShadowColourApplier shadowColourApplier) {
         Profiling.push("eg_text_customiser:replace_glyph_colour");
         int noAlphaColour = ColourUtil.removeAlpha(color);
 

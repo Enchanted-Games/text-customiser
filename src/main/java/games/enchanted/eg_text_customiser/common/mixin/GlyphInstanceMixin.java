@@ -1,6 +1,6 @@
-
 package games.enchanted.eg_text_customiser.common.mixin;
 
+import games.enchanted.eg_text_customiser.common.fake_style.DecorationType;
 import org.spongepowered.asm.mixin.Mixin;
 
 //? if minecraft: >= 1.21.5 {
@@ -30,7 +30,7 @@ public abstract class GlyphInstanceMixin {
         method = "<init>"
     )
     private void eg_text_customiser$replaceGlyphTextColours(float x, float y, int color, int shadowColor, BakedGlyph bakedGlyph, Style style, float boldOffset, float shadowOffset, CallbackInfo ci) {
-        TextOverrideManager.replaceColour(color, shadowColor, style, this.hasShadow(), colourRGBA -> this.color = colourRGBA, shadowRGBA -> this.shadowColor = shadowRGBA);
+        TextOverrideManager.replaceColour(color, shadowColor, style, this.hasShadow(), DecorationType.NONE, colourRGBA -> this.color = colourRGBA, shadowRGBA -> this.shadowColor = shadowRGBA);
     }
     //?}
 }

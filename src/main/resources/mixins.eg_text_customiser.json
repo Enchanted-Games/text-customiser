@@ -10,6 +10,7 @@
     "accessor.StyleInvoker"
   ],
   "client": [
+    "EffectMixin",
     "StringRenderOutputMixin",
     "accessor.TextColorAccess"
   ],

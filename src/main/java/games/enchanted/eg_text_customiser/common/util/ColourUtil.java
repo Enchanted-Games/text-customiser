@@ -1,7 +1,5 @@
 package games.enchanted.eg_text_customiser.common.util;
 
-import org.xml.sax.helpers.ParserAdapter;
-
 import java.util.Locale;
 
 public class ColourUtil {
@@ -84,5 +82,16 @@ public class ColourUtil {
 
     public static String formatIntAsHexString(int colour) {
         return String.format(Locale.ROOT, "#%06X", colour);
+    }
+
+
+    public static int calcMainColour(boolean isDropShadow, float a, float r, float g, float b) {
+        float dimFac = !isDropShadow ? 1f : 4f;
+        return ColourUtil.ARGB_to_ARGBint((int) (a * 255), (int) ((r * dimFac) * 255), (int) ((g * dimFac) * 255), (int) ((b * dimFac) * 255));
+    }
+
+    public static int calcShadowColour(boolean isDropShadow, float a, float r, float g, float b) {
+        float dimFac = !isDropShadow ? 0.25f : 1f;
+        return ColourUtil.ARGB_to_ARGBint((int) (a * 255), (int) ((r * dimFac) * 255), (int) ((g * dimFac) * 255), (int) ((b * dimFac) * 255));
     }
 }
