@@ -29,6 +29,7 @@ public class BasicColourPredicate implements ColourPredicate {
 
     @Override
     public boolean colourMatches(SpecialTextColour colour) {
+        if(colour == null) return false;
         return colour.equals(comparisonColour);
     }
 

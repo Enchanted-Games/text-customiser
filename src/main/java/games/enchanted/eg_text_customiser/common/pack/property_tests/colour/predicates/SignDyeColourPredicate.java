@@ -34,6 +34,7 @@ public class SignDyeColourPredicate implements ColourPredicate {
 
     @Override
     public boolean colourMatches(SpecialTextColour colour) {
+        if(colour == null) return false;
         // These colours in SignTextData are not used for comparison, just placeholders
         return colour.equals(SpecialTextColour.fromSignTextData(new SignTextData(
             dyeColor == null ? colour.getDyeColor() : dyeColor,

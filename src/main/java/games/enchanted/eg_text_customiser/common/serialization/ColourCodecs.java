@@ -12,18 +12,18 @@ import java.util.Locale;
 public class ColourCodecs {
     public static Codec<Integer> RGB_HEX_CODEC = Codec.STRING.comapFlatMap(
         input -> {
-            if(!input.startsWith("#")) {
-                return DataResult.error(() -> "Invalid colour! Must start with a `#`. Value '" + input + "' not valid");
+            if(!input.matches("^#[0-9a-fA-F]{6}$")) {
+                return DataResult.error(() -> "Invalid hexadecimal colour. Value '" + input + "' is not valid");
             }
             try {
-                int n = Integer.parseInt(input.substring(1), 16);
-                if (n < 0 || n > 0xFFFFFF) {
-                    return DataResult.error(() -> "Hexadecimal value exceeds maximum of `0xffffff` " + input);
+                int parsedRgb = Integer.parseInt(input.substring(1), 16);
+                if (parsedRgb < 0 || parsedRgb > 0xFFFFFF) {
+                    return DataResult.error(() -> "Invalid hexadecimal colour. Hexadecimal value exceeds maximum of `#FFFFFF` " + input);
                 }
-                return DataResult.success(n);
+                return DataResult.success(parsedRgb);
             }
             catch (NumberFormatException numberFormatException) {
-                return DataResult.error(() -> "Invalid hexadecimal value " + input);
+                return DataResult.error(() -> "Invalid hexadecimal value '" + input + "'");
             }
         },
         input -> {
@@ -37,7 +37,7 @@ public class ColourCodecs {
     public static Codec<Integer> RGB_INT_LIST_CODEC = Codec.INT.listOf().comapFlatMap(
         (input) -> {
             if(input.size() != 3) {
-                return DataResult.error(() -> "Invalid colour! Must be a list of 3 ints, got '" + input.size() + "' instead.");
+                return DataResult.error(() -> "Invalid colour. Must be a list of 3 ints, got size of '" + input.size() + "' instead.");
             }
             return DataResult.success(ColourUtil.RGB_to_RGBint(input.get(0), input.get(1), input.get(2)));
         },
@@ -50,13 +50,10 @@ public class ColourCodecs {
     public static Codec<String> NAMED_COLOUR_CODEC = Codec.STRING.comapFlatMap(
         input -> {
             ChatFormatting formatting = ChatFormatting.getByName(input);
-            if(formatting == null) {
-                return DataResult.error(() -> "Invalid named colour! Value '" + input + "' not a valid named colour.");
+            if(formatting == null || !formatting.isColor()) {
+                return DataResult.error(() -> "Invalid named colour. Value '" + input + "' not a valid name.");
             }
-            if(formatting.isColor()) {
-                return DataResult.success(input);
-            }
-            return DataResult.error(() -> "Invalid named colour '" + input + "'");
+            return DataResult.success(input);
         },
         input -> input
     );

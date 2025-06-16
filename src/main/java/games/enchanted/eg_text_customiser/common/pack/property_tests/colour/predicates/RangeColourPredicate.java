@@ -31,6 +31,7 @@ public class RangeColourPredicate implements ColourPredicate {
 
     @Override
     public boolean colourMatches(SpecialTextColour colour) {
+        if(colour == null) return false;
         if(!matchNamedColours && colour.isNamedColour()) return false;
         int[] testParts = ColourUtil.RGBint_to_RGB(colour.safeGetAsRGB());
         for (int i = 0; i < 3; i++) {

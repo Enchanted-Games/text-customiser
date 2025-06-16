@@ -114,7 +114,7 @@ public class TextOverrideManager {
         }
 
         int noAlphaShadowColour = ColourUtil.removeAlpha(shadowColor);
-        FakeStyle fakeStyle = new FakeStyle(comparisonTextColour, noAlphaShadowColour, style.isBold(), style.isItalic(), style.isUnderlined(), style.isStrikethrough(), style.isObfuscated(), style.getFont());
+        FakeStyle fakeStyle = new FakeStyle(comparisonTextColour, shadowColor == 0 ? null : noAlphaShadowColour, style.isBold(), style.isItalic(), style.isUnderlined(), style.isStrikethrough(), style.isObfuscated(), style.getFont());
         FakeStyle newStyle = TextOverrideManager.applyFakeColourOverride(fakeStyle);
 
         int colorAlpha = ColourUtil.extractAlpha(color);
