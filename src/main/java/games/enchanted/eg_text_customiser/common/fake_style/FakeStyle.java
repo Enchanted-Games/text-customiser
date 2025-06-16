@@ -17,6 +17,7 @@ public record FakeStyle(
     @Nullable Boolean strikethrough,
     @Nullable Boolean obfuscated,
     @Nullable ResourceLocation font,
+    @Nullable DecorationType decorationType,
     ColourOverrideDefinition.PropertiesPart properties
 ) {
     public FakeStyle(
@@ -27,15 +28,16 @@ public record FakeStyle(
         @Nullable Boolean underlined,
         @Nullable Boolean strikethrough,
         @Nullable Boolean obfuscated,
-        @Nullable ResourceLocation font
+        @Nullable ResourceLocation font,
+        @Nullable DecorationType decorationType
     ) {
-        this(colour, shadowColour, bold, italic, underlined, strikethrough, obfuscated, font, ColourOverrideDefinition.PropertiesPart.DEFAULT);
+        this(colour, shadowColour, bold, italic, underlined, strikethrough, obfuscated, font, decorationType, ColourOverrideDefinition.PropertiesPart.DEFAULT);
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof FakeStyle fakeStyle)) return false;
-        return Objects.equals(bold, fakeStyle.bold) && Objects.equals(italic, fakeStyle.italic) && Objects.equals(underlined, fakeStyle.underlined) && Objects.equals(obfuscated, fakeStyle.obfuscated) && Objects.equals(shadowColour, fakeStyle.shadowColour) && Objects.equals(strikethrough, fakeStyle.strikethrough) && Objects.equals(font, fakeStyle.font) && Objects.equals(colour, fakeStyle.colour) && Objects.equals(properties, fakeStyle.properties);
+        return Objects.equals(bold, fakeStyle.bold) && Objects.equals(italic, fakeStyle.italic) && Objects.equals(underlined, fakeStyle.underlined) && Objects.equals(obfuscated, fakeStyle.obfuscated) && Objects.equals(shadowColour, fakeStyle.shadowColour) && Objects.equals(strikethrough, fakeStyle.strikethrough) && Objects.equals(font, fakeStyle.font) && Objects.equals(colour, fakeStyle.colour) && Objects.equals(decorationType, fakeStyle.decorationType) && Objects.equals(properties, fakeStyle.properties);
     }
 
     @Override
@@ -54,6 +56,7 @@ public record FakeStyle(
             ", strikethrough=" + strikethrough +
             ", obfuscated=" + obfuscated +
             ", font=" + font +
+            ", decorationType=" + decorationType +
             ", properties=" + properties +
         '}';
     }
@@ -68,6 +71,7 @@ public record FakeStyle(
             (strikethrough == null ? "" : ", strikethrough=" + strikethrough) +
             (obfuscated == null ? "" : ", obfuscated=" + obfuscated) +
             (font == null ? "" : ", font=\"" + font + "\"") +
+            (decorationType == null ? "" : ", decoration_type=\"" + decorationType + "\"") +
         ']';
     }
 }

@@ -5,7 +5,6 @@ import com.google.gson.JsonParser;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import games.enchanted.eg_text_customiser.common.Logging;
-import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
@@ -18,6 +17,10 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
+
+//? if fabric {
+import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
+ //?}
 
 public abstract class JsonReloadListener<T> extends SimplePreparableReloadListener<Map<ResourceLocation, T>>
 //? if fabric {

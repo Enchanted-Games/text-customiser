@@ -28,7 +28,7 @@ public abstract class EffectMixin implements EffectAdditions {
     //? if minecraft: >= 1.21.5 {
     @Override
     public void eg_text_customiser$applyEffectOverride(Style style, DecorationType decorationType, boolean isDropShadow) {
-        TextOverrideManager.replaceColour(color, shadowColor(), style, hasShadow(), DecorationType.NONE, colourRGBA -> this.color = colourRGBA, shadowRGBA -> this.shadowColor = shadowRGBA);
+        TextOverrideManager.replaceColour(color, shadowColor(), style, hasShadow(), decorationType, colourRGBA -> this.color = colourRGBA, shadowRGBA -> this.shadowColor = shadowRGBA);
     }
     //?} else {
     /*@Override
@@ -40,7 +40,7 @@ public abstract class EffectMixin implements EffectAdditions {
             shadowColour,
             style,
             true,
-            DecorationType.NONE,
+            decorationType,
             colourARGB -> {
                 if(!isDropShadow) {
                     int[] argb = ColourUtil.ARGBint_to_ARGB(colourARGB);

@@ -79,7 +79,7 @@ public class StringRenderOutputMixin {
         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Font$StringRenderOutput;addEffect(Lnet/minecraft/client/gui/font/glyphs/BakedGlyph$Effect;)V"),
         method = "accept"
     )
-    private void eg_text_customiser$(@Coerce Object instance, BakedGlyph.Effect effect, Operation<Void> original, @Local(argsOnly = true) Style style) {
+    private void eg_text_customiser$callApplyOnEffect(@Coerce Object instance, BakedGlyph.Effect effect, Operation<Void> original, @Local(argsOnly = true) Style style) {
         ((EffectAdditions) effect).eg_text_customiser$applyEffectOverride(style, DecorationType.fromStyle(style), this.dropShadow);
         original.call(instance, effect);
     }
@@ -89,7 +89,7 @@ public class StringRenderOutputMixin {
         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Font$StringRenderOutput;addEffect(Lnet/minecraft/client/gui/font/glyphs/BakedGlyph$Effect;)V"),
         method = "accept"
     )
-    private void eg_text_customiser$(@Coerce Object instance, BakedGlyph.Effect effect, Operation<Void> original, @Local(argsOnly = true) Style style) {
+    private void eg_text_customiser$callApplyOnEffect(@Coerce Object instance, BakedGlyph.Effect effect, Operation<Void> original, @Local(argsOnly = true) Style style) {
         ((EffectAdditions) (Object) effect).eg_text_customiser$applyEffectOverride(style, DecorationType.fromStyle(style), false);
         original.call(instance, effect);
     }
