@@ -1,6 +1,7 @@
 package games.enchanted.eg_text_customiser.common.pack;
 
 import games.enchanted.eg_text_customiser.common.Logging;
+import games.enchanted.eg_text_customiser.common.config.ConfigValues;
 import games.enchanted.eg_text_customiser.common.duck.StyleAdditions;
 import games.enchanted.eg_text_customiser.common.fake_style.DecorationType;
 import games.enchanted.eg_text_customiser.common.fake_style.FakeStyle;
@@ -25,6 +26,7 @@ public class TextOverrideManager {
     private static final HashSet<FakeStyle> UNMATCHED_STYLED = new HashSet<>();
 
     private static void logStyle(FakeStyle style, @Nullable ResourceLocation matchedTo) {
+        if(!ConfigValues.TEXT_DEBUG_LOGS) return;
         String matchedPart = matchedTo != null ? "(and matched to '" + matchedTo + "')" : "(didn't match)";
         Logging.info("Seen {} style:\n{}", matchedPart, style.formattedString());
     }

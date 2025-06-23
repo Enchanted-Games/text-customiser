@@ -1,6 +1,8 @@
 package games.enchanted.eg_text_customiser.common.config;
 
+import games.enchanted.eg_text_customiser.common.Logging;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
@@ -10,6 +12,9 @@ import net.minecraft.network.chat.Style;
 
 public class ConfigScreen extends Screen {
     private static final Component TITLE = Component.translatableWithFallback("gui.eg_text_customiser.config.title", "Text Customiser Config").withStyle(Style.EMPTY.withBold(true));
+    private static final String TOGGLE_DEBUG_LOGS_KEY = "gui.eg_text_customiser.button.debug_logs";
+    private static final Component DEBUG_LOGS_TOGGLED_ON = Component.translatable(TOGGLE_DEBUG_LOGS_KEY, CommonComponents.OPTION_ON);
+    private static final Component DEBUG_LOGS_TOGGLED_OFF = Component.translatable(TOGGLE_DEBUG_LOGS_KEY, CommonComponents.OPTION_OFF);
 
     private final HeaderAndFooterLayout headerAndFooterLayout = new HeaderAndFooterLayout(this);
     private final LinearLayout contentsFlow = LinearLayout.vertical().spacing(8);
@@ -27,10 +32,26 @@ public class ConfigScreen extends Screen {
         this.headerAndFooterLayout.addTitleHeader(TITLE, this.font);
         this.headerAndFooterLayout.addToFooter(Button.builder(CommonComponents.GUI_DONE, (widget) -> this.onClose()).width(200).build());
 
+        addConfigOptions();
 
         this.headerAndFooterLayout.visitWidgets(this::addRenderableWidget);
         this.contentsFlow.visitWidgets(this::addRenderableWidget);
         this.repositionElements();
+    }
+
+    protected void addConfigOptions() {
+        addRenderableWidget(Button.builder(getToggledComponent(DEBUG_LOGS_TOGGLED_ON, DEBUG_LOGS_TOGGLED_OFF, ConfigValues.TEXT_DEBUG_LOGS), (widget) -> {
+            widget.setMessage(getToggledComponent(DEBUG_LOGS_TOGGLED_ON, DEBUG_LOGS_TOGGLED_OFF, !ConfigValues.TEXT_DEBUG_LOGS));
+            ConfigValues.TEXT_DEBUG_LOGS = !ConfigValues.TEXT_DEBUG_LOGS;
+            Logging.info("Text style logging turned {}", ConfigValues.TEXT_DEBUG_LOGS ? "on" : "off");
+        })
+        .tooltip(Tooltip.create(Component.translatable(TOGGLE_DEBUG_LOGS_KEY + ".tooltip")))
+        .bounds(width / 2 - 100, height / 2 - 20, Button.BIG_WIDTH, Button.DEFAULT_HEIGHT)
+        .build());
+    }
+
+    public static Component getToggledComponent(Component first, Component second, boolean toggle) {
+        return toggle ? first : second;
     }
 
     @Override
