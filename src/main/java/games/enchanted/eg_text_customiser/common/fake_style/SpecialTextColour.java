@@ -112,7 +112,7 @@ public class SpecialTextColour {
 
     private boolean compareColour(Either<Integer, String> comparison, boolean strictMatchNamed) {
         if(!strictMatchNamed) {
-            return Objects.equals(safeGetAsRGB(), safeGetAsRGB(colourValueOrName));
+            return Objects.equals(this.safeGetAsRGB(), safeGetAsRGB(comparison));
         }
         if(colourValueOrName.left().isPresent() && comparison.left().isPresent()) {
             // integer comparison
@@ -135,7 +135,7 @@ public class SpecialTextColour {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         SpecialTextColour that = (SpecialTextColour) o;
-        return compareTo(that, BasicColourPredicate.STRICT_MATCH_NAMED_DEFAULT);
+        return compareTo(that, true);
     }
 
     @Override
