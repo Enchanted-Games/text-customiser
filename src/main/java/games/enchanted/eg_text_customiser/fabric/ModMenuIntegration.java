@@ -1,3 +1,4 @@
+//? if fabric {
 package games.enchanted.eg_text_customiser.fabric;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
@@ -10,3 +11,4 @@ public class ModMenuIntegration implements ModMenuApi {
         return ConfigScreen::createConfigScreen;
     }
 }
+//?}
