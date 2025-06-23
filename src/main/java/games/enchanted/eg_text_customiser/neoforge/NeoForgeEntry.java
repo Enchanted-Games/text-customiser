@@ -2,10 +2,13 @@
 /*package games.enchanted.eg_text_customiser.neoforge;
 
 import games.enchanted.eg_text_customiser.common.ModEntry;
+import games.enchanted.eg_text_customiser.common.config.ConfigScreen;
 import games.enchanted.eg_text_customiser.common.pack.colour_override.ColourOverrideReloadListener;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 //? if minecraft: >= 1.21.5 {
 import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
 //?} else {
@@ -25,6 +28,8 @@ public class NeoForgeEntry {
         //?} else {
         /^bus.addListener((RegisterClientReloadListenersEvent event) -> event.registerReloadListener(new ColourOverrideReloadListener()));
         ^///?}
+
+        ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory.class, () -> (client, parent) -> ConfigScreen.createConfigScreen(parent));
     }
 }
 */
