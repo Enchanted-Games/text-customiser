@@ -3,6 +3,7 @@ package games.enchanted.eg_text_customiser.common.fake_style;
 
 import com.mojang.datafixers.util.Either;
 import games.enchanted.eg_text_customiser.common.mixin.accessor.TextColorAccess;
+import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.predicates.BasicColourPredicate;
 import games.enchanted.eg_text_customiser.common.util.ColourUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.TextColor;
@@ -84,6 +85,10 @@ public class SpecialTextColour {
     }
 
     public int safeGetAsRGB() {
+        return safeGetAsRGB(this.colourValueOrName);
+    }
+
+    private static int safeGetAsRGB(Either<Integer, String> colourValueOrName) {
         if(colourValueOrName.left().isPresent()) {
             return colourValueOrName.left().get();
         } else if(colourValueOrName.right().isEmpty()) {
@@ -105,7 +110,10 @@ public class SpecialTextColour {
         return colourValueOrName.right().isPresent();
     }
 
-    private boolean compareColour(Either<Integer, String> comparison) {
+    private boolean compareColour(Either<Integer, String> comparison, boolean strictMatchNamed) {
+        if(!strictMatchNamed) {
+            return Objects.equals(safeGetAsRGB(), safeGetAsRGB(colourValueOrName));
+        }
         if(colourValueOrName.left().isPresent() && comparison.left().isPresent()) {
             // integer comparison
             return Objects.equals(colourValueOrName.left(), comparison.left());
@@ -116,14 +124,18 @@ public class SpecialTextColour {
         return false;
     }
 
+    public boolean compareTo(SpecialTextColour comparison, boolean strictMatchNamed) {
+        if(this.isSignText && comparison.isSignText) {
+            return Objects.equals(this.dyeColor, comparison.dyeColor) && isGlowingSignText == comparison.isGlowingSignText && isGlowingOutline == comparison.isGlowingOutline;
+        }
+        return isSignText == comparison.isSignText && isGlowingSignText == comparison.isGlowingSignText && isGlowingOutline == comparison.isGlowingOutline && compareColour(comparison.colourValueOrName, strictMatchNamed);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         SpecialTextColour that = (SpecialTextColour) o;
-        if(this.isSignText && that.isSignText) {
-            return Objects.equals(this.dyeColor, that.dyeColor) && isGlowingSignText == that.isGlowingSignText && isGlowingOutline == that.isGlowingOutline;
-        }
-        return isSignText == that.isSignText && isGlowingSignText == that.isGlowingSignText && isGlowingOutline == that.isGlowingOutline && compareColour(that.colourValueOrName);
+        return compareTo(that, BasicColourPredicate.STRICT_MATCH_NAMED_DEFAULT);
     }
 
     @Override

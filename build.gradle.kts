@@ -227,7 +227,7 @@ val apis = arrayListOf(
         src.versionRange.isPresent && env.isFabric
     },
 
-    APISource(DepType.IMPL, APIModInfo("modmenu"), "com.terraformersmc:modmenu",optionalVersionProperty("deps.api.modmenu"))
+    APISource(DepType.API_OPTIONAL, APIModInfo("modmenu"), "com.terraformersmc:modmenu",optionalVersionProperty("deps.api.modmenu"))
     { src ->
         src.versionRange.isPresent && env.isFabric
     }
