@@ -8,6 +8,8 @@ public class ModConstants {
 
     public static final SystemToast.SystemToastId RELOAD_FAILED_TOAST = new SystemToast.SystemToastId(10000L);
 
+    public static final String WIKI_LINK = "https://github.com/Enchanted-Games/text-customiser/wiki";
+
     //? if fabric {
     public static final String TARGET_PLATFORM = "fabric";
     //?}
