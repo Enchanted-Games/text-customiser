@@ -136,6 +136,7 @@ class Env {
     val archivesBaseName = property("archives_base_name").toString()
 
     val mcVersion = versionProperty("deps.core.mc.version_range")
+    val parchmentMcVersion = versionProperty("deps.parchment.mc_version")
     val parchmentMappingVersion = property("deps.parchment.version")
 
     val loader = property("loom.platform").toString()
@@ -479,7 +480,7 @@ dependencies {
     mappings(
         loom.layered {
             officialMojangMappings()
-            parchment("org.parchmentmc.data:parchment-${env.mcVersion.min}:${env.parchmentMappingVersion}@zip")
+            parchment("org.parchmentmc.data:parchment-${env.parchmentMcVersion.min}:${env.parchmentMappingVersion}@zip")
         }
     )
 

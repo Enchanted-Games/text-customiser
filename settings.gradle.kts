@@ -28,9 +28,9 @@ extensions.configure<StonecutterSettings> {
     shared {
         vers("1.21.1-fabric","1.21.1")
         vers("1.21.1-neoforge","1.21.1")
-        vers("1.21.5-fabric","1.21.5")
-        vers("1.21.5-neoforge","1.21.5")
-        vcsVersion="1.21.5-fabric"
+        vers("1.21.6-fabric","1.21.6")
+        vers("1.21.6-neoforge","1.21.6")
+        vcsVersion="1.21.6-fabric"
     }
     create(rootProject)
 }

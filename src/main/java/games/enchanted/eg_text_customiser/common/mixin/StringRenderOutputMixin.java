@@ -22,7 +22,11 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Shadow;
 *///?}
 
-@Mixin(targets = "net.minecraft.client.gui.Font$StringRenderOutput")
+//? if minecraft: <= 1.21.4 {
+/*@Mixin(targets = "net.minecraft.client.gui.Font$StringRenderOutput")
+*///?} else {
+@Mixin(targets = "net.minecraft.client.gui.Font$PreparedTextBuilder")
+//?}
 public class StringRenderOutputMixin {
     //? if minecraft: <= 1.21.4 {
     
@@ -75,32 +79,44 @@ public class StringRenderOutputMixin {
     *///?}
 
     @WrapOperation(
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Font$StringRenderOutput;addEffect(Lnet/minecraft/client/gui/font/glyphs/BakedGlyph$Effect;)V", ordinal = 0),
+        at = @At(value = "INVOKE", target =
+        //? if minecraft: <= 1.21.4 {
+        /*"Lnet/minecraft/client/gui/Font$StringRenderOutput;addEffect(Lnet/minecraft/client/gui/font/glyphs/BakedGlyph$Effect;)V"
+        *///?} else {
+        "Lnet/minecraft/client/gui/Font$PreparedTextBuilder;addEffect(Lnet/minecraft/client/gui/font/glyphs/BakedGlyph$Effect;)V"
+        //?}
+        , ordinal = 0),
         method = "accept"
     )
     private void eg_text_customiser$applyOverrideToStrikethroughEffect(@Coerce Object instance, BakedGlyph.Effect effect, Operation<Void> original, @Local(argsOnly = true) Style style) {
         boolean isShadow =
-        //? if minecraft: >= 1.21.5 {
-        false;
-        //?} else {
+        //? if minecraft: <= 1.21.4 {
         /*this.dropShadow;
-        *///?}
+        *///?} else {
+        false;
+        //?}
 
         BakedGlyph.Effect newEffect = ((EffectAdditions) (Object) effect).eg_text_customiser$applyEffectOverride(style, DecorationType.STRIKETHROUGH, isShadow);
         original.call(instance, newEffect);
     }
 
     @WrapOperation(
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Font$StringRenderOutput;addEffect(Lnet/minecraft/client/gui/font/glyphs/BakedGlyph$Effect;)V", ordinal = 1),
+        at = @At(value = "INVOKE", target =
+        //? if minecraft: <= 1.21.4 {
+        /*"Lnet/minecraft/client/gui/Font$StringRenderOutput;addEffect(Lnet/minecraft/client/gui/font/glyphs/BakedGlyph$Effect;)V"
+        *///?} else {
+        "Lnet/minecraft/client/gui/Font$PreparedTextBuilder;addEffect(Lnet/minecraft/client/gui/font/glyphs/BakedGlyph$Effect;)V"
+        //?}
+        , ordinal = 1),
         method = "accept"
     )
     private void eg_text_customiser$applyOverrideToUnderlineEffect(@Coerce Object instance, BakedGlyph.Effect effect, Operation<Void> original, @Local(argsOnly = true) Style style) {
         boolean isShadow =
-        //? if minecraft: >= 1.21.5 {
-        false;
-        //?} else {
+        //? if minecraft: <= 1.21.4 {
         /*this.dropShadow;
-        *///?}
+        *///?} else {
+        false;
+        //?}
 
         BakedGlyph.Effect newEffect = ((EffectAdditions) (Object) effect).eg_text_customiser$applyEffectOverride(style, DecorationType.UNDERLINE, isShadow);
         original.call(instance, newEffect);
