@@ -60,7 +60,7 @@ public class ConfigScreen extends Screen {
         );
 
         contentsFlow.addChild(
-            Button.builder(WIKI_LINK, ConfirmLinkScreen.confirmLink(this, URI.create(ModConstants.WIKI_LINK)))
+            Button.builder(WIKI_LINK, ConfirmLinkScreen.confirmLink(this, URI.create(ModConstants.WIKI_LINK), false))
             .tooltip(Tooltip.create(Component.translatable(WIKI_LINK_KEY + ".tooltip")))
             .bounds(this.width / 2 - (Button.BIG_WIDTH / 2), this.height / 2 - 20, Button.BIG_WIDTH, Button.DEFAULT_HEIGHT)
             .build()
