@@ -110,10 +110,12 @@ public class SpecialTextColour {
         return colourValueOrName.right().isPresent();
     }
 
-    private boolean compareColour(Either<Integer, String> comparison, boolean strictMatchNamed) {
-        if(!strictMatchNamed) {
+    private boolean compareColour(Either<Integer, String> comparison, boolean matchNamed) {
+        if(matchNamed) {
+            // conver to rgb before comparing
             return Objects.equals(this.safeGetAsRGB(), safeGetAsRGB(comparison));
         }
+        // otherwise do type comparison
         if(colourValueOrName.left().isPresent() && comparison.left().isPresent()) {
             // integer comparison
             return Objects.equals(colourValueOrName.left(), comparison.left());
@@ -124,11 +126,11 @@ public class SpecialTextColour {
         return false;
     }
 
-    public boolean compareTo(SpecialTextColour comparison, boolean strictMatchNamed) {
+    public boolean compareTo(SpecialTextColour comparison, boolean matchNamed) {
         if(this.isSignText && comparison.isSignText) {
             return Objects.equals(this.dyeColor, comparison.dyeColor) && isGlowingSignText == comparison.isGlowingSignText && isGlowingOutline == comparison.isGlowingOutline;
         }
-        return isSignText == comparison.isSignText && isGlowingSignText == comparison.isGlowingSignText && isGlowingOutline == comparison.isGlowingOutline && compareColour(comparison.colourValueOrName, strictMatchNamed);
+        return isSignText == comparison.isSignText && isGlowingSignText == comparison.isGlowingSignText && isGlowingOutline == comparison.isGlowingOutline && compareColour(comparison.colourValueOrName, matchNamed);
     }
 
     @Override
