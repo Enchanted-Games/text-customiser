@@ -140,6 +140,7 @@ class Env {
     val parchmentMappingVersion = property("deps.parchment.version")
 
     val loader = property("loom.platform").toString()
+    val loaderPublishingPrefix = if (loader == "fabric") "Fabric" else if (loader == "neoforge") "NF" else "Unknown";
     val isFabric = loader == "fabric"
     val isNeo = loader == "neoforge"
     val isCommon = project.parent!!.name == "common"
@@ -593,7 +594,7 @@ tasks.processResources {
 publishMods {
     file = tasks.remapJar.get().archiveFile
     additionalFiles.from(tasks.remapSourcesJar.get().archiveFile)
-    displayName = "${mod.displayName} ${mod.version} for ${env.mcVersion.min}"
+    displayName = "[${env.loaderPublishingPrefix}] v${mod.version} for mc ${env.mcVersion.min}"
     version = mod.version
     changelog = rootProject.file("CHANGELOG.md").readText()
     type = STABLE
