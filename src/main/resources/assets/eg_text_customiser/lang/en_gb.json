@@ -3,6 +3,9 @@
   "gui.eg_text_customiser.button.debug_logs": "Log Text Styles: %s",
   "gui.eg_text_customiser.button.debug_logs.tooltip": "With this option enabled, all text styles will be logged to the output log. Each style is logged once the first time it is seen, reload resourcepacks to clear the list of seen text styles. This option will be turned off on the next game launch",
 
+  "gui.eg_text_customiser.button.toggle_mod": "Disable Mod: %s",
+  "gui.eg_text_customiser.button.toggle_mod.tooltip": "Temporarily disables the mod until the next game launch",
+
   "gui.eg_text_customiser.button.wiki_link": "Read the Wiki",
   "gui.eg_text_customiser.button.wiki_link.tooltip": "Read the Wiki to learn how to use this mod to its full potential"
 }

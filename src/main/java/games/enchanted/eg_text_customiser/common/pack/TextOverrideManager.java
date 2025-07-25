@@ -32,16 +32,16 @@ public class TextOverrideManager {
     }
 
     private static @Nullable ColourOverrideDefinition getDefinitionForStyle(@NotNull FakeStyle style) {
-        Profiling.push("eg_text_customiser:check_unmatched");
+        Profiling.push("check_unmatched");
         if(UNMATCHED_STYLED.contains(style)) {
             Profiling.pop();
             return null;
         }
         Profiling.pop();
 
-        Profiling.push("eg_text_customiser:loop");
+        Profiling.push("loop");
         for (Map.Entry<ResourceLocation, ColourOverrideDefinition> entry : COLOUR_OVERRIDE_DEFINITIONS.entrySet()) {
-            Profiling.push("eg_text_customiser:check_match");
+            Profiling.push("try_find_match");
             if(entry.getValue().styleMatches(style)) {
                 logStyle(style, entry.getKey());
                 MATCHED_STYLES.put(style, entry.getValue().applyToStyle(style));
@@ -59,7 +59,7 @@ public class TextOverrideManager {
 
     public static synchronized FakeStyle applyFakeColourOverride(@NotNull FakeStyle originalStyle) {
         // TODO: implement better hash functions for FakeStyle and ColourOverrideDefinition
-        Profiling.push("eg_text_customiser:check_matched");
+        Profiling.push("check_matched");
         @Nullable FakeStyle matchedStyle = MATCHED_STYLES.get(originalStyle);
         if(matchedStyle != null) {
             Profiling.pop();
@@ -67,10 +67,10 @@ public class TextOverrideManager {
         }
         Profiling.pop();
 
-        Profiling.push("eg_text_customiser:get_definition");
+        Profiling.push("get_definition");
         ColourOverrideDefinition overrideDefinition = getDefinitionForStyle(originalStyle);
         Profiling.pop();
-        Profiling.push("eg_text_customiser:check_null_or_apply");
+        Profiling.push("check_null_or_apply");
         if(overrideDefinition == null) {
             Profiling.pop();
             return originalStyle;
@@ -90,7 +90,8 @@ public class TextOverrideManager {
     }
 
     public static void replaceColour(int color, int shadowColor, Style style, boolean hasShadow, DecorationType decorationType, ColourApplier colourApplier, ShadowColourApplier shadowColourApplier) {
-        Profiling.push("eg_text_customiser:replace_glyph_colour");
+        if(ConfigValues.DISABLE_MOD || COLOUR_OVERRIDE_DEFINITIONS.isEmpty()) return;
+        Profiling.push("replace_glyph_colour");
         int noAlphaColour = ColourUtil.removeAlpha(color);
 
         SpecialTextColour comparisonTextColour;

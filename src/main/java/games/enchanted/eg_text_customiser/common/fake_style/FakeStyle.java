@@ -36,13 +36,12 @@ public record FakeStyle(
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof FakeStyle fakeStyle)) return false;
-        return Objects.equals(bold, fakeStyle.bold) && Objects.equals(italic, fakeStyle.italic) && Objects.equals(underlined, fakeStyle.underlined) && Objects.equals(obfuscated, fakeStyle.obfuscated) && Objects.equals(shadowColour, fakeStyle.shadowColour) && Objects.equals(strikethrough, fakeStyle.strikethrough) && Objects.equals(font, fakeStyle.font) && Objects.equals(colour, fakeStyle.colour) && Objects.equals(decorationType, fakeStyle.decorationType) && Objects.equals(properties, fakeStyle.properties);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(colour, shadowColour, bold, italic, underlined, strikethrough, obfuscated, font, properties);
+        if (!(o instanceof FakeStyle(
+            SpecialTextColour colour1, Integer shadowColour1, Boolean bold1, Boolean italic1, Boolean underlined1,
+            Boolean strikethrough1, Boolean obfuscated1, ResourceLocation font1, DecorationType type,
+            ColourOverrideDefinition.PropertiesPart properties1
+        ))) return false;
+        return Objects.equals(bold, bold1) && Objects.equals(italic, italic1) && Objects.equals(underlined, underlined1) && Objects.equals(obfuscated, obfuscated1) && Objects.equals(shadowColour, shadowColour1) && Objects.equals(strikethrough, strikethrough1) && Objects.equals(font, font1) && Objects.equals(colour, colour1) && Objects.equals(decorationType, type) && Objects.equals(properties, properties1);
     }
 
     @Override

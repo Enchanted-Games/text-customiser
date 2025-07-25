@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import net.minecraft.network.chat.Style;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Coerce;
+import org.spongepowered.asm.mixin.injection.Slice;
 
 //? if minecraft: <= 1.21.4 {
 
@@ -80,12 +81,17 @@ public class StringRenderOutputMixin {
 
     @WrapOperation(
         at = @At(value = "INVOKE", target =
-        //? if minecraft: <= 1.21.4 {
-        /*"Lnet/minecraft/client/gui/Font$StringRenderOutput;addEffect(Lnet/minecraft/client/gui/font/glyphs/BakedGlyph$Effect;)V"
-        *///?} else {
-        "Lnet/minecraft/client/gui/Font$PreparedTextBuilder;addEffect(Lnet/minecraft/client/gui/font/glyphs/BakedGlyph$Effect;)V"
-        //?}
-        , ordinal = 0),
+            //? if minecraft: <= 1.21.4 {
+            /*"Lnet/minecraft/client/gui/Font$StringRenderOutput;addEffect(Lnet/minecraft/client/gui/font/glyphs/BakedGlyph$Effect;)V"
+            *///?} else {
+            "Lnet/minecraft/client/gui/Font$PreparedTextBuilder;addEffect(Lnet/minecraft/client/gui/font/glyphs/BakedGlyph$Effect;)V"
+            //?}
+            ,
+            ordinal = 0
+        ),
+        slice = @Slice(
+            from = @At(value = "INVOKE", target = "Lnet/minecraft/network/chat/Style;isStrikethrough()Z")
+        ),
         method = "accept"
     )
     private void eg_text_customiser$applyOverrideToStrikethroughEffect(@Coerce Object instance, BakedGlyph.Effect effect, Operation<Void> original, @Local(argsOnly = true) Style style) {
@@ -102,12 +108,17 @@ public class StringRenderOutputMixin {
 
     @WrapOperation(
         at = @At(value = "INVOKE", target =
-        //? if minecraft: <= 1.21.4 {
-        /*"Lnet/minecraft/client/gui/Font$StringRenderOutput;addEffect(Lnet/minecraft/client/gui/font/glyphs/BakedGlyph$Effect;)V"
-        *///?} else {
-        "Lnet/minecraft/client/gui/Font$PreparedTextBuilder;addEffect(Lnet/minecraft/client/gui/font/glyphs/BakedGlyph$Effect;)V"
-        //?}
-        , ordinal = 1),
+            //? if minecraft: <= 1.21.4 {
+            /*"Lnet/minecraft/client/gui/Font$StringRenderOutput;addEffect(Lnet/minecraft/client/gui/font/glyphs/BakedGlyph$Effect;)V"
+             *///?} else {
+            "Lnet/minecraft/client/gui/Font$PreparedTextBuilder;addEffect(Lnet/minecraft/client/gui/font/glyphs/BakedGlyph$Effect;)V"
+            //?}
+            ,
+            ordinal = 0
+        ),
+        slice = @Slice(
+            from = @At(value = "INVOKE", target = "Lnet/minecraft/network/chat/Style;isUnderlined()Z")
+        ),
         method = "accept"
     )
     private void eg_text_customiser$applyOverrideToUnderlineEffect(@Coerce Object instance, BakedGlyph.Effect effect, Operation<Void> original, @Local(argsOnly = true) Style style) {

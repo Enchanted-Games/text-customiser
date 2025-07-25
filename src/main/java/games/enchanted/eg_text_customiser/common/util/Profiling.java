@@ -10,7 +10,7 @@ public class Profiling {
         //? if minecraft: <= 1.21.4 {
         /*Minecraft.getInstance().getProfiler().push(name);
         *///?} else {
-        Profiler.get().push(name);
+        Profiler.get().push("etc:" + name);
         //?}
     }
 

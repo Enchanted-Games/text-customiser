@@ -114,14 +114,14 @@ public class ColourOverrideDefinition {
     }
 
     public boolean styleMatches(FakeStyle style) {
-        Profiling.push("eg_text_customiser:check_style_matches");
+        Profiling.push("check_style_matches");
         boolean result = tests.stream().allMatch(test -> test.apply(style));
         Profiling.pop();
         return result;
     }
 
     public FakeStyle applyToStyle(FakeStyle style) {
-        Profiling.push("eg_text_customiser:apply_to_style");
+        Profiling.push("apply_to_style");
         FakeStyle newStyle = new FakeStyle(
             replacement.colour == null ? style.colour() : new SpecialTextColour(replacement.colour),
             replacement.shadowColour == null ? style.shadowColour() : replacement.shadowColour,

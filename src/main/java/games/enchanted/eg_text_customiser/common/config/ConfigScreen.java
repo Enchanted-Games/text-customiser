@@ -19,6 +19,9 @@ public class ConfigScreen extends Screen {
     private static final String TOGGLE_DEBUG_LOGS_KEY = "gui.eg_text_customiser.button.debug_logs";
     private static final Component DEBUG_LOGS_TOGGLED_ON = Component.translatable(TOGGLE_DEBUG_LOGS_KEY, CommonComponents.OPTION_ON);
     private static final Component DEBUG_LOGS_TOGGLED_OFF = Component.translatable(TOGGLE_DEBUG_LOGS_KEY, CommonComponents.OPTION_OFF);
+    private static final String TOGGLE_MOD = "gui.eg_text_customiser.button.toggle_mod";
+    private static final Component MOD_TOGGLED_ON = Component.translatable(TOGGLE_MOD, CommonComponents.OPTION_ON);
+    private static final Component MOD_TOGGLED_OFF = Component.translatable(TOGGLE_MOD, CommonComponents.OPTION_OFF);
     private static final String WIKI_LINK_KEY = "gui.eg_text_customiser.button.wiki_link";
     private static final Component WIKI_LINK = Component.translatableWithFallback(WIKI_LINK_KEY, "Read the Wiki");
 
@@ -50,20 +53,31 @@ public class ConfigScreen extends Screen {
     protected void addConfigOptions() {
         contentsFlow.addChild(
             Button.builder(getToggledComponent(DEBUG_LOGS_TOGGLED_ON, DEBUG_LOGS_TOGGLED_OFF, ConfigValues.TEXT_DEBUG_LOGS), (widget) -> {
-                widget.setMessage(getToggledComponent(DEBUG_LOGS_TOGGLED_ON, DEBUG_LOGS_TOGGLED_OFF, !ConfigValues.TEXT_DEBUG_LOGS));
-                ConfigValues.TEXT_DEBUG_LOGS = !ConfigValues.TEXT_DEBUG_LOGS;
-                Logging.info("Text style logging turned {}", ConfigValues.TEXT_DEBUG_LOGS ? "on" : "off");
-            })
+                    widget.setMessage(getToggledComponent(DEBUG_LOGS_TOGGLED_ON, DEBUG_LOGS_TOGGLED_OFF, !ConfigValues.TEXT_DEBUG_LOGS));
+                    ConfigValues.TEXT_DEBUG_LOGS = !ConfigValues.TEXT_DEBUG_LOGS;
+                    Logging.info("Text style logging turned {}", ConfigValues.TEXT_DEBUG_LOGS ? "on" : "off");
+                })
             .tooltip(Tooltip.create(Component.translatable(TOGGLE_DEBUG_LOGS_KEY + ".tooltip")))
             .bounds(this.width / 2 - (Button.BIG_WIDTH / 2), this.height / 2 - 20 - (Button.DEFAULT_HEIGHT + 4), Button.BIG_WIDTH, Button.DEFAULT_HEIGHT)
             .build()
         );
 
         contentsFlow.addChild(
-            Button.builder(WIKI_LINK, ConfirmLinkScreen.confirmLink(this, URI.create(ModConstants.WIKI_LINK), false))
-            .tooltip(Tooltip.create(Component.translatable(WIKI_LINK_KEY + ".tooltip")))
-            .bounds(this.width / 2 - (Button.BIG_WIDTH / 2), this.height / 2 - 20, Button.BIG_WIDTH, Button.DEFAULT_HEIGHT)
+            Button.builder(getToggledComponent(MOD_TOGGLED_ON, MOD_TOGGLED_OFF, ConfigValues.DISABLE_MOD), (widget) -> {
+                    widget.setMessage(getToggledComponent(MOD_TOGGLED_ON, MOD_TOGGLED_OFF, !ConfigValues.DISABLE_MOD));
+                    ConfigValues.DISABLE_MOD = !ConfigValues.DISABLE_MOD;
+                    Logging.info("Text replacement turned {}", ConfigValues.DISABLE_MOD ? "on" : "off");
+                })
+            .tooltip(Tooltip.create(Component.translatable(TOGGLE_MOD + ".tooltip")))
+            .bounds(this.width / 2 - (Button.BIG_WIDTH / 2), this.height / 2 - 20 - (Button.DEFAULT_HEIGHT + 4), Button.BIG_WIDTH, Button.DEFAULT_HEIGHT)
             .build()
+        );
+
+        contentsFlow.addChild(
+            Button.builder(WIKI_LINK, ConfirmLinkScreen.confirmLink(this, URI.create(ModConstants.WIKI_LINK), false))
+                .tooltip(Tooltip.create(Component.translatable(WIKI_LINK_KEY + ".tooltip")))
+                .bounds(this.width / 2 - (Button.BIG_WIDTH / 2), this.height / 2 - 20, Button.BIG_WIDTH, Button.DEFAULT_HEIGHT)
+                .build()
         );
 
         this.repositionElements();
