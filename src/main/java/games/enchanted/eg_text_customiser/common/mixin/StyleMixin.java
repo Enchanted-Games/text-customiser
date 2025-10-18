@@ -5,10 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import games.enchanted.eg_text_customiser.common.duck.StyleAdditions;
 import games.enchanted.eg_text_customiser.common.fake_style.SignTextData;
 import games.enchanted.eg_text_customiser.common.mixin.accessor.StyleInvoker;
-import net.minecraft.network.chat.ClickEvent;
-import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextColor;
+import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.*;
@@ -21,10 +18,8 @@ import java.util.Optional;
 public abstract class StyleMixin implements StyleAdditions {
     @Unique @Nullable private SignTextData eg_text_customiser$signTextData = null;
 
-    //? if minecraft: >= 1.21.4 {
-    @Mutable @Shadow @Final Integer shadowColor;
-    //?}
     @Shadow @Final @Nullable TextColor color;
+    @Mutable @Shadow @Final Integer shadowColor;
     @Shadow @Final @Nullable Boolean bold;
     @Shadow @Final @Nullable Boolean italic;
     @Shadow @Final @Nullable Boolean underlined;
@@ -33,23 +28,15 @@ public abstract class StyleMixin implements StyleAdditions {
     @Shadow @Final @Nullable ClickEvent clickEvent;
     @Shadow @Final @Nullable HoverEvent hoverEvent;
     @Shadow @Final @Nullable String insertion;
-    @Shadow @Final @Nullable ResourceLocation font;
+    @Shadow @Final @Nullable FontDescription font;
 
     @WrapOperation(
-        at = @At(value = "NEW", target =
-            //? if minecraft: >= 1.21.4 {
-            "(Lnet/minecraft/network/chat/TextColor;Ljava/lang/Integer;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Lnet/minecraft/network/chat/ClickEvent;Lnet/minecraft/network/chat/HoverEvent;Ljava/lang/String;Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/network/chat/Style;"
-            //?} else {
-            /*"(Lnet/minecraft/network/chat/TextColor;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Lnet/minecraft/network/chat/ClickEvent;Lnet/minecraft/network/chat/HoverEvent;Ljava/lang/String;Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/network/chat/Style;"
-            *///?}
-        ),
+        at = @At(value = "NEW", target = "(Lnet/minecraft/network/chat/TextColor;Ljava/lang/Integer;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Lnet/minecraft/network/chat/ClickEvent;Lnet/minecraft/network/chat/HoverEvent;Ljava/lang/String;Lnet/minecraft/network/chat/FontDescription;)Lnet/minecraft/network/chat/Style;"),
         method = "*"
     )
     private Style eg_text_customiser$initialiseFieldsOnNewInstance(
         @Nullable TextColor color,
-        //? if minecraft: >= 1.21.4 {
         @Nullable Integer shadowColor,
-        //?}
         @Nullable Boolean bold,
         @Nullable Boolean italic,
         @Nullable Boolean underlined,
@@ -58,14 +45,12 @@ public abstract class StyleMixin implements StyleAdditions {
         @Nullable ClickEvent clickEvent,
         @Nullable HoverEvent hoverEvent,
         @Nullable String insertion,
-        @Nullable ResourceLocation font,
+        @Nullable FontDescription font,
         Operation<Style> original
     ) {
         Style newStyle = original.call(
             color,
-            //? if minecraft: >= 1.21.4 {
             shadowColor,
-            //?}
             bold,
             italic,
             underlined,
@@ -76,7 +61,7 @@ public abstract class StyleMixin implements StyleAdditions {
             insertion,
             font
         );
-        ((StyleAdditions) newStyle).eg_text_customiser$setSignTextData(this.eg_text_customiser$getSignTextData());
+        ((StyleAdditions) (Object) newStyle).eg_text_customiser$setSignTextData(this.eg_text_customiser$getSignTextData());
         return newStyle;
     }
 
@@ -87,7 +72,7 @@ public abstract class StyleMixin implements StyleAdditions {
     )
     private boolean eg_text_customiser$addEqualityForSignTextField(Object a, Object b, Operation<Boolean> original) {
         if((a instanceof Style styleA) && (b instanceof Style styleB)) {
-            return original.call(a, b) && Objects.equals(((StyleAdditions) styleA).eg_text_customiser$getSignTextData(), ((StyleAdditions) styleB).eg_text_customiser$getSignTextData());
+            return original.call(a, b) && Objects.equals(((StyleAdditions) (Object) styleA).eg_text_customiser$getSignTextData(), ((StyleAdditions) (Object) styleB).eg_text_customiser$getSignTextData());
         }
         return original.call(a, b);
     }
@@ -109,7 +94,7 @@ public abstract class StyleMixin implements StyleAdditions {
             this.insertion,
             this.font
         );
-        ((StyleAdditions) newStyle).eg_text_customiser$setSignTextData(signTextData);
+        ((StyleAdditions) (Object) newStyle).eg_text_customiser$setSignTextData(signTextData);
         return newStyle;
     }
 

@@ -10,6 +10,7 @@ import games.enchanted.eg_text_customiser.common.fake_style.SpecialTextColour;
 import games.enchanted.eg_text_customiser.common.pack.colour_override.ColourOverrideDefinition;
 import games.enchanted.eg_text_customiser.common.util.ColourUtil;
 import games.enchanted.eg_text_customiser.common.util.Profiling;
+import net.minecraft.network.chat.FontDescription;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -96,7 +97,7 @@ public class TextOverrideManager {
 
         SpecialTextColour comparisonTextColour;
 
-        SignTextData signTextData = ((StyleAdditions) style).eg_text_customiser$getSignTextData();
+        SignTextData signTextData = ((StyleAdditions) (Object) style).eg_text_customiser$getSignTextData();
         boolean currentlyRegularColour;
         boolean currentlyOutlineColour;
         if(signTextData != null) {
@@ -118,7 +119,8 @@ public class TextOverrideManager {
         }
 
         int noAlphaShadowColour = ColourUtil.removeAlpha(shadowColor);
-        FakeStyle fakeStyle = new FakeStyle(comparisonTextColour, shadowColor == 0 ? null : noAlphaShadowColour, style.isBold(), style.isItalic(), style.isUnderlined(), style.isStrikethrough(), style.isObfuscated(), style.getFont(), decorationType);
+        ResourceLocation loc = ((FontDescription.Resource) style.getFont()).id();
+        FakeStyle fakeStyle = new FakeStyle(comparisonTextColour, shadowColor == 0 ? null : noAlphaShadowColour, style.isBold(), style.isItalic(), style.isUnderlined(), style.isStrikethrough(), style.isObfuscated(), loc, decorationType);
         FakeStyle newStyle = TextOverrideManager.applyFakeColourOverride(fakeStyle);
 
         int colorAlpha = ColourUtil.extractAlpha(color);
@@ -137,7 +139,7 @@ public class TextOverrideManager {
             // shadow colour has not changed but regular colour has, change shadow based on new colour
             shadowColourApplier.applyShadowColour(ColourUtil.applyAlpha(ColourUtil.darkenRGB(newStyle.colour().safeGetAsRGB(), newStyle.properties().autoShadowMultiplier()), shadowAlpha));
         }
-        else if(newStyle.shadowColour() != null ) {
+        else if(newStyle.shadowColour() != null) {
             // shadow colour has changed, replace it
             shadowColourApplier.applyShadowColour(ColourUtil.applyAlpha(newStyle.shadowColour(), shadowAlpha));
         }

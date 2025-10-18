@@ -56,7 +56,7 @@ public abstract class SignTextMixin {
             }
 
             Style style = mutableComponent.getStyle();
-            style = ((StyleAdditions) style).eg_text_customiser$withSignTextData(signTextData);
+            style = ((StyleAdditions) (Object) style).eg_text_customiser$withSignTextData(signTextData);
             mutableComponent.setStyle(style);
             modifiedComponents.add(mutableComponent);
         }

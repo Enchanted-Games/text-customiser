@@ -11,6 +11,7 @@
     "SignTextMixin",
     "StringRenderOutputMixin",
     "StyleMixin",
+    "accessor.FontAccess",
     "accessor.StyleInvoker",
     "accessor.TextColorAccess"
   ],
