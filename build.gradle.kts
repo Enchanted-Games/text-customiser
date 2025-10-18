@@ -20,6 +20,11 @@ repositories {
         name = "Terraformers"
     }
 
+    // required by yacl
+    maven("https://thedarkcolour.github.io/KotlinForForge/") {
+        name = "Kotlin for Forge"
+    }
+
     mavenCentral()
     exclusiveContent {
         forRepository { maven("https://www.cursemaven.com") { name = "CurseForge" } }
@@ -72,6 +77,9 @@ class VersionRange(val min: String, val max: String){
         return "${if(min.isEmpty()) "(" else "["}${min},${max}${if(max.isEmpty()) ")" else "]"}"
     }
     fun asFabric() : String{
+        if(min.isEmpty() && max.isEmpty()) {
+            return "*"
+        }
         var out = ""
         if(min.isNotEmpty()){
             out += ">=$min"
@@ -85,6 +93,7 @@ class VersionRange(val min: String, val max: String){
         return out
     }
 }
+val wildcardVersion = VersionRange("", "");
 
 /**
  * Creates a VersionRange from a listProperty
@@ -135,7 +144,8 @@ enum class EnvType {
 class Env {
     val archivesBaseName = property("archives_base_name").toString()
 
-    val mcVersion = versionProperty("deps.core.mc.version_range")
+    val mcVersionCompileTarget = versionProperty("deps.core.mc.version_range")
+    val mcVersionCompatibleRange = versionProperty("deps.core.mc.compatible_range")
     val parchmentMcVersion = versionProperty("deps.parchment.mc_version")
     val parchmentMappingVersion = property("deps.parchment.version")
 
@@ -147,6 +157,8 @@ class Env {
     val isApi = project.parent!!.name == "api"
     val type = if(isFabric) EnvType.FABRIC else EnvType.NEOFORGE
 
+    val modmenuEnabled = optionalVersionProperty("deps.api.modmenu").isPresent;
+
     // if MC requires higher JVMs in future updates change this controller.
     val javaVer = if(atMost("1.16.5")) 8 else if(atMost("1.20.4")) 17 else 21
 
@@ -155,10 +167,10 @@ class Env {
     // The modloader system is separate from the API in Neo
     val neoforgeLoaderVersion = versionProperty("deps.core.neoforge.loader.version_range")
 
-    fun atLeast(version: String) = stonecutter.compare(mcVersion.min, version) >= 0
-    fun atMost(version: String) = stonecutter.compare(mcVersion.min, version) <= 0
-    fun isNot(version: String) = stonecutter.compare(mcVersion.min, version) != 0
-    fun isExact(version: String) = stonecutter.compare(mcVersion.min, version) == 0
+    fun atLeast(version: String) = stonecutter.compare(mcVersionCompileTarget.min, version) >= 0
+    fun atMost(version: String) = stonecutter.compare(mcVersionCompileTarget.min, version) <= 0
+    fun isNot(version: String) = stonecutter.compare(mcVersionCompileTarget.min, version) != 0
+    fun isExact(version: String) = stonecutter.compare(mcVersionCompileTarget.min, version) == 0
 
     private fun extractForgeVer(str: String) : String {
         val split = str.split("-")
@@ -181,8 +193,8 @@ enum class DepType {
             return true
         }
     },
-    // Implementation
-    IMPL,
+    // Mod Implementation
+    MOD_IMPL,
     // Forge Runtime Library
     FRL{
         override fun includeInDepsList(): Boolean {
@@ -215,8 +227,10 @@ class APIModInfo(val modid: String?, val curseSlug: String?, val rinthSlug: Stri
  * If modid is null then the API will not be declared as a dependency in uploads.
  * The enable condition determines whether the API will be used for this version.
  */
-class APISource(val type: DepType, val modInfo: APIModInfo, val mavenLocation: String, val versionRange: Optional<VersionRange>, private val enableCondition: Predicate<APISource>) {
+class APISource(val type: DepType, val modInfo: APIModInfo, val mavenLocation: String, val versionRange: Optional<VersionRange>, val dependencyVersion: Optional<VersionRange>, val enableCondition: Predicate<APISource>) {
     val enabled = this.enableCondition.test(this)
+
+    constructor(type: DepType, modInfo: APIModInfo, mavenLocation: String, versionRange: Optional<VersionRange>, enableCondition: Predicate<APISource>) : this(type, modInfo, mavenLocation, versionRange, Optional.empty(), enableCondition)
 }
 
 /**
@@ -224,15 +238,26 @@ class APISource(val type: DepType, val modInfo: APIModInfo, val mavenLocation: S
  */
 // add any hardcoded apis here. Hardcoded APIs should be used in most if not all your versions.
 val apis = arrayListOf(
-    APISource(DepType.API, APIModInfo(if(env.atMost("1.16.5")) "fabric" else "fabric-api","fabric-api"), "net.fabricmc.fabric-api:fabric-api",optionalVersionProperty("deps.api.fabric"))
-    { src ->
-        src.versionRange.isPresent && env.isFabric
-    },
+    APISource(
+        DepType.API,
+        APIModInfo(if(env.atMost("1.16.5")) "fabric" else "fabric-api","fabric-api"),
+        "net.fabricmc.fabric-api:fabric-api",
+        optionalVersionProperty("deps.api.fabric"),
+        Optional.of(wildcardVersion),
+        { src ->
+            src.versionRange.isPresent && env.isFabric
+        }
+    ),
 
-    APISource(DepType.API_OPTIONAL, APIModInfo("modmenu"), "com.terraformersmc:modmenu",optionalVersionProperty("deps.api.modmenu"))
-    { src ->
-        src.versionRange.isPresent && env.isFabric
-    }
+    APISource(
+        DepType.API_OPTIONAL,
+        APIModInfo("modmenu"),
+        "com.terraformersmc:modmenu",
+        optionalVersionProperty("deps.api.modmenu"),
+        { src ->
+            src.versionRange.isPresent && env.isFabric
+        }
+    )
 )
 
 // Stores information about the mod itself.
@@ -304,7 +329,7 @@ class ModPublish {
     init {
         val tempmcTargets = listProperty("publish_acceptable_mc_versions")
         if(tempmcTargets.isEmpty()){
-            mcTargets.add(env.mcVersion.min)
+            mcTargets.add(env.mcVersionCompatibleRange.min)
         }
         else{
             mcTargets.addAll(tempmcTargets)
@@ -319,34 +344,44 @@ val modPublish = ModPublish()
 class ModDependencies {
     val loadBefore = listProperty("deps.before")
     fun forEachAfter(cons: BiConsumer<String,VersionRange>){
-        forEachRequired(cons)
-        forEachOptional(cons)
+        forEachRequired(cons, false)
+        forEachOptional(cons, false)
     }
 
     fun forEachBefore(cons: Consumer<String>){
         loadBefore.forEach(cons)
     }
 
-    fun forEachOptional(cons: BiConsumer<String,VersionRange>){
-        apis.forEach{src->
-            if(src.enabled && src.type.isOptional() && src.type.includeInDepsList()) src.versionRange.ifPresent { ver -> src.modInfo.modid?.let {
-                cons.accept(it, ver)
-            }}
-        }
+    fun forEachOptional(cons: BiConsumer<String,VersionRange>, forModMetadata: Boolean) {
+        iterateDependencies(cons, forModMetadata)
     }
 
-    fun forEachRequired(cons: BiConsumer<String,VersionRange>){
-        cons.accept("minecraft",env.mcVersion)
+    fun forEachRequired(cons: BiConsumer<String,VersionRange>, forModMetadata: Boolean){
+        cons.accept("minecraft",env.mcVersionCompatibleRange)
         if (env.isNeo){
             cons.accept("neoforge", env.neoforgeVersion)
         }
         if(env.isFabric) {
             cons.accept("fabric", env.fabricLoaderVersion)
         }
+        iterateDependencies(cons, forModMetadata)
+    }
+
+    fun iterateDependencies(cons: BiConsumer<String,VersionRange>, forModMetadata: Boolean) {
         apis.forEach{src->
-            if(src.enabled && !src.type.isOptional() && src.type.includeInDepsList()) src.versionRange.ifPresent { ver -> src.modInfo.modid?.let {
-                cons.accept(it, ver)
-            }}
+            if(src.enabled && !src.type.isOptional() && src.type.includeInDepsList()) {
+                val range: Optional<VersionRange>;
+                if(forModMetadata) {
+                    if(src.dependencyVersion.isPresent) range = src.dependencyVersion else range = src.versionRange;
+                } else {
+                    range = src.versionRange
+                }
+                range.ifPresent { ver ->
+                    src.modInfo.modid?.let {
+                        cons.accept(it, ver)
+                    }
+                }
+            }
         }
     }
 }
@@ -400,14 +435,14 @@ class SpecialMultiversionedConstants {
     private fun fabricDependencyList() : String{
         var out = "  \"depends\":{"
         var useComma = false
-        dependencies.forEachRequired{modid,ver->
+        dependencies.forEachRequired({modid,ver->
             if(useComma){
                 out+=","
             }
             out+="\n"
             out+="    \"${modid}\": \"${ver.asFabric()}\""
             useComma = true
-        }
+        }, true)
         return "$out\n  }"
 
     }
@@ -416,12 +451,12 @@ class SpecialMultiversionedConstants {
         dependencies.forEachBefore{modid ->
             out += forgedep(modid,VersionRange("",""),"BEFORE",false)
         }
-        dependencies.forEachOptional{modid,ver->
+        dependencies.forEachOptional({modid,ver->
             out += forgedep(modid,ver,"AFTER",false)
-        }
-        dependencies.forEachRequired{modid,ver->
+        }, true)
+        dependencies.forEachRequired({modid,ver->
             out += forgedep(modid,ver,"AFTER",true)
-        }
+        }, true)
         return out
     }
     private fun forgedep(modid: String, versionRange: VersionRange, order: String, mandatory: Boolean) : String {
@@ -439,7 +474,7 @@ val modMixins = ModMixins()
 val dynamics = SpecialMultiversionedConstants()
 
 // Upload version format
-version = "v${mod.version}-${env.loader}-mc${env.mcVersion.min}"
+version = "v${mod.version}-${env.loader}-mc${env.mcVersionCompileTarget.min}"
 group = property("group").toString()
 
 // Adds both optional and required dependencies to stonecutter version checking.
@@ -456,6 +491,7 @@ apis.forEach{ src ->
 }
 
 // Stonecutter variables here.
+stonecutter.const("modmenu",env.modmenuEnabled)
 stonecutter.const("fabric",env.isFabric)
 stonecutter.const("neoforge",env.isNeo)
 
@@ -470,14 +506,18 @@ loom {
 
     runConfigs.all {
         ideConfigGenerated(stonecutter.current.isActive)
-        vmArgs("-Dmixin.debug.export=true")
         runDir = "../../run"
+    }
+
+    val widenerFile = file("src/main/resources/${mod.id}.accesswidener");
+    if(widenerFile.exists()) {
+        accessWidenerPath = widenerFile;
     }
 }
 base { archivesName.set(env.archivesBaseName) }
 
 dependencies {
-    minecraft("com.mojang:minecraft:${env.mcVersion.min}")
+    minecraft("com.mojang:minecraft:${env.mcVersionCompileTarget.min}")
     mappings(
         loom.layered {
             officialMojangMappings()
@@ -498,7 +538,7 @@ dependencies {
                 if(src.type == DepType.API || src.type == DepType.API_OPTIONAL) {
                     modApi("${src.mavenLocation}:${ver.min}")
                 }
-                if(src.type == DepType.IMPL) {
+                if(src.type == DepType.MOD_IMPL) {
                     modImplementation("${src.mavenLocation}:${ver.min}")
                 }
                 if(src.type == DepType.INCLUDE) {
@@ -530,9 +570,9 @@ abstract class ProcessResourcesExtension : ProcessResources() {
     val autoPluralize = arrayListOf(
         "/data/minecraft/tags/block",
         "/data/minecraft/tags/item",
-        "/data/eg_text_customiser/loot_table",
-        "/data/eg_text_customiser/recipe",
-        "/data/eg_text_customiser/tags/item",
+        "/data/eg_particle_interactions/loot_table",
+        "/data/eg_particle_interactions/recipe",
+        "/data/eg_particle_interactions/tags/item",
     )
     override fun copy() {
         super.copy()
@@ -566,8 +606,8 @@ tasks.processResources {
         "icon" to mod.icon,
         "fabric_common_entry" to modFabric.commonEntry,
         "fabric_client_entry" to modFabric.clientEntry,
-        "mc_min" to env.mcVersion.min,
-        "mc_max" to env.mcVersion.max,
+        "mc_min" to env.mcVersionCompileTarget.min,
+        "mc_max" to env.mcVersionCompileTarget.max,
         "issue_tracker" to mod.issueTracker,
         "java_ver" to env.javaVer.toString(),
         "forgelike_loader_ver" to dynamics.forgelikeLoaderVer,
@@ -594,7 +634,7 @@ tasks.processResources {
 publishMods {
     file = tasks.remapJar.get().archiveFile
     additionalFiles.from(tasks.remapSourcesJar.get().archiveFile)
-    displayName = "[${env.loaderPublishingPrefix}] v${mod.version} for mc ${env.mcVersion.min}"
+    displayName = "[${env.loaderPublishingPrefix}] v${mod.version} for mc ${env.mcVersionCompileTarget.min}"
     version = mod.version
     changelog = rootProject.file("CHANGELOG.md").readText()
     type = STABLE
