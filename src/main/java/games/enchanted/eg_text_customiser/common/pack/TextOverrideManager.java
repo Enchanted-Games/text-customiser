@@ -119,8 +119,7 @@ public class TextOverrideManager {
         }
 
         int noAlphaShadowColour = ColourUtil.removeAlpha(shadowColor);
-        ResourceLocation loc = ((FontDescription.Resource) style.getFont()).id();
-        FakeStyle fakeStyle = new FakeStyle(comparisonTextColour, shadowColor == 0 ? null : noAlphaShadowColour, style.isBold(), style.isItalic(), style.isUnderlined(), style.isStrikethrough(), style.isObfuscated(), loc, decorationType);
+        FakeStyle fakeStyle = new FakeStyle(comparisonTextColour, shadowColor == 0 ? null : noAlphaShadowColour, style.isBold(), style.isItalic(), style.isUnderlined(), style.isStrikethrough(), style.isObfuscated(), style.getFont(), decorationType);
         FakeStyle newStyle = TextOverrideManager.applyFakeColourOverride(fakeStyle);
 
         int colorAlpha = ColourUtil.extractAlpha(color);

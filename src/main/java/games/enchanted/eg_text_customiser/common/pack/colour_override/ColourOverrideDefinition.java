@@ -20,6 +20,8 @@ import games.enchanted.eg_text_customiser.common.pack.property_tests.font.predic
 import games.enchanted.eg_text_customiser.common.serialization.ColourCodecs;
 import games.enchanted.eg_text_customiser.common.serialization.ModCodecs;
 import games.enchanted.eg_text_customiser.common.util.Profiling;
+import net.minecraft.network.chat.FontDescription;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.Nullable;
@@ -102,7 +104,12 @@ public class ColourOverrideDefinition {
                 if(this.fontTests == null || this.fontTests.isEmpty()) {
                     return true;
                 }
-                return this.fontTests.stream().anyMatch(test -> test.matches(style.font()));
+                return this.fontTests.stream().anyMatch(test -> {
+                    if(style.font() instanceof FontDescription.Resource(ResourceLocation id)) {
+                        return test.matches(id);
+                    }
+                    return false;
+                });
             },
             (style) -> {
                 if(this.decorationTypeTests.isEmpty()) {

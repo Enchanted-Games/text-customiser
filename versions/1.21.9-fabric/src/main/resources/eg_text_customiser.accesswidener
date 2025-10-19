@@ -1,2 +1,4 @@
 accessWidener v2 named
 accessible class net/minecraft/client/gui/font/glyphs/BakedSheetGlyph$EffectInstance
+accessible class net/minecraft/client/gui/font/AtlasGlyphProvider$Instance
+accessible class net/minecraft/client/gui/font/PlayerGlyphProvider$Instance

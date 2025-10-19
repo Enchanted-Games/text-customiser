@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.*;
 import net.minecraft.client.gui.font.glyphs.BakedSheetGlyph;
 
 @Mixin(BakedSheetGlyph.EffectInstance.class)
-public abstract class EffectMixin implements EffectAdditions {
+public abstract class EffectInstanceMixin implements EffectAdditions {
     @Shadow public abstract int color();
     @Shadow public abstract int shadowColor();
     @Shadow abstract boolean hasShadow();
