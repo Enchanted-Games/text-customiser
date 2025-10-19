@@ -10,7 +10,6 @@ import games.enchanted.eg_text_customiser.common.fake_style.SpecialTextColour;
 import games.enchanted.eg_text_customiser.common.pack.colour_override.ColourOverrideDefinition;
 import games.enchanted.eg_text_customiser.common.util.ColourUtil;
 import games.enchanted.eg_text_customiser.common.util.Profiling;
-import net.minecraft.network.chat.FontDescription;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -128,6 +127,10 @@ public class TextOverrideManager {
             colourApplier.applyColour(ColourUtil.applyAlpha(newColour, colorAlpha));
         }
 
+        if(newStyle.properties().forceDisableShadow()) {
+            shadowColourApplier.applyShadowColour(0);
+        }
+
         if(!hasShadow && !newStyle.properties().forceEnableShadow()) {
             Profiling.pop();
             return;
@@ -142,6 +145,7 @@ public class TextOverrideManager {
             // shadow colour has changed, replace it
             shadowColourApplier.applyShadowColour(ColourUtil.applyAlpha(newStyle.shadowColour(), shadowAlpha));
         }
+
         Profiling.pop();
     }
 

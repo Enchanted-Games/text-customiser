@@ -20,8 +20,6 @@ import games.enchanted.eg_text_customiser.common.pack.property_tests.font.predic
 import games.enchanted.eg_text_customiser.common.serialization.ColourCodecs;
 import games.enchanted.eg_text_customiser.common.serialization.ModCodecs;
 import games.enchanted.eg_text_customiser.common.util.Profiling;
-import net.minecraft.network.chat.FontDescription;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.Nullable;
@@ -153,18 +151,20 @@ public class ColourOverrideDefinition {
         Logging.info("Example file: {}", result.getOrThrow().toString());
     }
 
-    public record PropertiesPart(boolean autoGenerateShadow, float autoShadowMultiplier, boolean forceEnableShadow) {
+    public record PropertiesPart(boolean autoGenerateShadow, float autoShadowMultiplier, boolean forceEnableShadow, boolean forceDisableShadow) {
         public static final boolean AUTO_GENERATE_SHADOW_DEFAULT = false;
         public static final float AUTO_SHADOW_MULTIPLIER_DEFAULT = 0.25f;
         public static final boolean FORCE_ENABLE_SHADOW_DEFAULT = false;
+        public static final boolean FORCE_DISABLE_SHADOW_DEFAULT = false;
 
-        public static final PropertiesPart DEFAULT = new PropertiesPart(AUTO_GENERATE_SHADOW_DEFAULT, AUTO_SHADOW_MULTIPLIER_DEFAULT, FORCE_ENABLE_SHADOW_DEFAULT);
+        public static final PropertiesPart DEFAULT = new PropertiesPart(AUTO_GENERATE_SHADOW_DEFAULT, AUTO_SHADOW_MULTIPLIER_DEFAULT, FORCE_ENABLE_SHADOW_DEFAULT, FORCE_DISABLE_SHADOW_DEFAULT);
 
         private static final Codec<PropertiesPart> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
                 Codec.BOOL.optionalFieldOf("auto_generate_shadow", AUTO_GENERATE_SHADOW_DEFAULT).forGetter(part -> part.autoGenerateShadow),
                 ExtraCodecs.POSITIVE_FLOAT.optionalFieldOf("auto_shadow_multiplier", AUTO_SHADOW_MULTIPLIER_DEFAULT).forGetter(part -> part.autoShadowMultiplier),
-                Codec.BOOL.optionalFieldOf("force_enable_shadow", FORCE_ENABLE_SHADOW_DEFAULT).forGetter(part -> part.forceEnableShadow)
+                Codec.BOOL.optionalFieldOf("force_enable_shadow", FORCE_ENABLE_SHADOW_DEFAULT).forGetter(part -> part.forceEnableShadow),
+                Codec.BOOL.optionalFieldOf("force_disable_shadow", FORCE_DISABLE_SHADOW_DEFAULT).forGetter(part -> part.forceDisableShadow)
             ).apply(
                 instance, PropertiesPart::new
             )
