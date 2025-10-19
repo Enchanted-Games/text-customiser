@@ -19,5 +19,6 @@ public class FontPredicates {
         FONT_PREDICATES_MAPPER.put(ResourceLocationUtil.ofMod("regex"), RegexFontPredicate.MAP_CODEC);
         FONT_PREDICATES_MAPPER.put(ResourceLocationUtil.ofMod("atlas_sprite"), BasicAtlasFontPredicate.MAP_CODEC);
         FONT_PREDICATES_MAPPER.put(ResourceLocationUtil.ofMod("atlas_sprite_regex"), RegexAtlasFontPredicate.MAP_CODEC);
+        FONT_PREDICATES_MAPPER.put(ResourceLocationUtil.ofMod("profile"), PlayerFontPredicate.MAP_CODEC);
     }
 }
