@@ -104,12 +104,7 @@ public class ColourOverrideDefinition {
                 if(this.fontTests == null || this.fontTests.isEmpty()) {
                     return true;
                 }
-                return this.fontTests.stream().anyMatch(test -> {
-                    if(style.font() instanceof FontDescription.Resource(ResourceLocation id)) {
-                        return test.matches(id);
-                    }
-                    return false;
-                });
+                return this.fontTests.stream().anyMatch(test -> test.matches(style.font()));
             },
             (style) -> {
                 if(this.decorationTypeTests.isEmpty()) {

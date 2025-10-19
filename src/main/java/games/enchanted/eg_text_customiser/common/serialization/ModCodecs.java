@@ -5,11 +5,20 @@ import com.google.common.collect.HashBiMap;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import net.minecraft.network.chat.FontDescription;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
 import java.util.function.Function;
 
 public class ModCodecs {
+    public static Codec<FontDescription> RESOURCE_FONT_DESCRIPTION = ResourceLocation.CODEC.flatComapMap(FontDescription.Resource::new, (fontDescription) -> {
+        if (fontDescription instanceof FontDescription.Resource(ResourceLocation id)) {
+            return DataResult.success(id);
+        }
+        return DataResult.error(() -> "Invalid font description type: " + fontDescription + ". Expected a Resource type");
+    });
+
     public static <T> Codec<List<T>> singleOrListCodec(Codec<T> codec) {
         return Codec.either(codec.listOf(), codec).xmap(
             either -> either.map(list -> list, List::of),

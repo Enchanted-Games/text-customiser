@@ -2,12 +2,13 @@ package games.enchanted.eg_text_customiser.common.pack.property_tests;
 
 
 import games.enchanted.eg_text_customiser.common.pack.property_tests.font.predicates.FontPredicate;
+import net.minecraft.network.chat.FontDescription;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class FontPredicateTest implements PropertyTest<ResourceLocation> {
+public class FontPredicateTest implements PropertyTest<FontDescription> {
     @Nullable
     private final FontPredicate predicate;
 
@@ -16,7 +17,7 @@ public class FontPredicateTest implements PropertyTest<ResourceLocation> {
     }
 
     @Override
-    public boolean matches(@Nullable ResourceLocation value) {
+    public boolean matches(@Nullable FontDescription value) {
         if(this.predicate == null) return true;
         return this.predicate.fontMatches(value);
     }
