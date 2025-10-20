@@ -132,6 +132,7 @@ public class ColourOverrideDefinition {
             style.obfuscated(),
             style.font(),
             style.decorationType(),
+            style.character(),
             properties
         );
         Profiling.pop();

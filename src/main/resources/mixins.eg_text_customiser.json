@@ -4,18 +4,21 @@
   "package": "games.enchanted.eg_text_customiser.common.mixin",
   "compatibilityLevel": "JAVA_${java_ver}",
   "mixins": [
-    "AtlasGlyphProviderMixin",
-    "PlayerGlyphProviderMixin"
+    "provider.AtlasGlyphProviderMixin",
+    "provider.PlayerGlyphProviderMixin"
   ],
   "client": [
-    "EffectInstanceMixin",
-    "GlyphInstanceMixin",
     "SignTextMixin",
     "StringRenderOutputMixin",
     "StyleMixin",
     "accessor.FontAccess",
     "accessor.StyleInvoker",
-    "accessor.TextColorAccess"
+    "accessor.TextColorAccess",
+    "bitmap_codepoint.BitmapProviderDefinitionMixin",
+    "bitmap_codepoint.BitmapProviderGlyphMixin",
+    "bitmap_codepoint.BitmapProviderMixin",
+    "glyph.EffectInstanceMixin",
+    "glyph.GlyphInstanceMixin"
   ],
   "injectors": {
     "defaultRequire": 1

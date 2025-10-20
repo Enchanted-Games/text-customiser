@@ -1,6 +1,8 @@
-package games.enchanted.eg_text_customiser.common.mixin;
+package games.enchanted.eg_text_customiser.common.mixin.glyph;
 
+import games.enchanted.eg_text_customiser.common.Logging;
 import games.enchanted.eg_text_customiser.common.fake_style.DecorationType;
+import games.enchanted.eg_text_customiser.common.codepoint.CodepointGlyphInfo;
 import net.minecraft.client.gui.font.glyphs.BakedSheetGlyph;
 import org.spongepowered.asm.mixin.Mixin;
 
@@ -35,6 +37,11 @@ public abstract class GlyphInstanceMixin {
         float shadowOffset,
         CallbackInfo ci
     ) {
-        TextOverrideManager.replaceColour(color, shadowColor, style, this.hasShadow(), DecorationType.NONE, colourRGBA -> this.color = colourRGBA, shadowRGBA -> this.shadowColor = shadowRGBA);
+        Character character = null;
+        if(bakedGlyph.info() instanceof CodepointGlyphInfo codepointGlyphInfo) {
+            character = codepointGlyphInfo.getCodepoint();
+        }
+        TextOverrideManager.replaceColour(color, shadowColor, style, this.hasShadow(), DecorationType.NONE, character, colourRGBA -> this.color = colourRGBA, shadowRGBA -> this.shadowColor = shadowRGBA);
+        Logging.info("points: {}", ((CodepointGlyphInfo) bakedGlyph.info()).getCodepoint());
     }
 }

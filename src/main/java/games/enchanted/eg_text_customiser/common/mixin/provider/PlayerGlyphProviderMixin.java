@@ -1,4 +1,4 @@
-package games.enchanted.eg_text_customiser.common.mixin;
+package games.enchanted.eg_text_customiser.common.mixin.provider;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -26,6 +26,7 @@ public class PlayerGlyphProviderMixin {
             style,
             false,
             DecorationType.NONE,
+            null,
             colourARGB -> newCols[0] = colourARGB,
             shadowARGB -> newCols[1] = shadowARGB
         );

@@ -1,4 +1,4 @@
-package games.enchanted.eg_text_customiser.common.mixin;
+package games.enchanted.eg_text_customiser.common.mixin.glyph;
 
 import games.enchanted.eg_text_customiser.common.duck.EffectAdditions;
 import games.enchanted.eg_text_customiser.common.fake_style.DecorationType;
@@ -31,7 +31,7 @@ public abstract class EffectInstanceMixin implements EffectAdditions {
     @Override
     public TextRenderable eg_text_customiser$applyEffectOverride(Style style, DecorationType decorationType, boolean isDropShadow) {
         final int[] newCols = {this.color(), this.shadowColor()};
-        TextOverrideManager.replaceColour(color, shadowColor(), style, hasShadow(), decorationType, colourRGBA -> newCols[0] = colourRGBA, shadowRGBA -> newCols[1] = shadowRGBA);
+        TextOverrideManager.replaceColour(color, shadowColor(), style, hasShadow(), decorationType, null, colourRGBA -> newCols[0] = colourRGBA, shadowRGBA -> newCols[1] = shadowRGBA);
         return ((FontAccess) Minecraft.getInstance().font).eg_text_customiser$getProvider().effect().createEffect(
             this.x0,
             this.y0,
