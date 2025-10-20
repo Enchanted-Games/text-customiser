@@ -137,7 +137,11 @@ public class TextOverrideManager {
         }
 
         int shadowAlpha = newStyle.properties().forceEnableShadow() ? colorAlpha : ColourUtil.extractAlpha(shadowColor);
-        if(newStyle.colour() != null && newStyle.shadowColour() != null && newStyle.shadowColour() == noAlphaShadowColour && newStyle.properties().autoGenerateShadow()) {
+        if(newStyle.properties().forceDisableShadow()) {
+            // force disable shadow
+            shadowColourApplier.applyShadowColour(0);
+        }
+        else if(newStyle.colour() != null && newStyle.shadowColour() != null && newStyle.shadowColour() == noAlphaShadowColour && newStyle.properties().autoGenerateShadow()) {
             // shadow colour has not changed but regular colour has, change shadow based on new colour
             shadowColourApplier.applyShadowColour(ColourUtil.applyAlpha(ColourUtil.darkenRGB(newStyle.colour().safeGetAsRGB(), newStyle.properties().autoShadowMultiplier()), shadowAlpha));
         }
