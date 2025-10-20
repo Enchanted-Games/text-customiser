@@ -89,7 +89,7 @@ public class TextOverrideManager {
         UNMATCHED_STYLED.clear();
     }
 
-    public static void replaceColour(int color, int shadowColor, Style style, boolean hasShadow, DecorationType decorationType, @Nullable Character character, ColourApplier colourApplier, ShadowColourApplier shadowColourApplier) {
+    public static void replaceColour(int color, int shadowColor, Style style, boolean hasShadow, DecorationType decorationType, @Nullable Integer codepoint, ColourApplier colourApplier, ShadowColourApplier shadowColourApplier) {
         if(ConfigValues.DISABLE_MOD || COLOUR_OVERRIDE_DEFINITIONS.isEmpty()) return;
         Profiling.push("replace_glyph_colour");
         int noAlphaColour = ColourUtil.removeAlpha(color);
@@ -118,7 +118,7 @@ public class TextOverrideManager {
         }
 
         int noAlphaShadowColour = ColourUtil.removeAlpha(shadowColor);
-        FakeStyle fakeStyle = new FakeStyle(comparisonTextColour, shadowColor == 0 ? null : noAlphaShadowColour, style.isBold(), style.isItalic(), style.isUnderlined(), style.isStrikethrough(), style.isObfuscated(), style.getFont(), decorationType, character);
+        FakeStyle fakeStyle = new FakeStyle(comparisonTextColour, shadowColor == 0 ? null : noAlphaShadowColour, style.isBold(), style.isItalic(), style.isUnderlined(), style.isStrikethrough(), style.isObfuscated(), style.getFont(), decorationType, codepoint);
         FakeStyle newStyle = TextOverrideManager.applyFakeColourOverride(fakeStyle);
 
         int colorAlpha = ColourUtil.extractAlpha(color);

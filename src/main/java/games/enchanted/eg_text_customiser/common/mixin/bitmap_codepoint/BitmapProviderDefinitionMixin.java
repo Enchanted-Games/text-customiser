@@ -20,7 +20,7 @@ public class BitmapProviderDefinitionMixin {
     )
     private <T extends UnbakedGlyph> Object eg_text_customiser$setCodepointOnGlyph(CodepointMap<T> instance, int index, Object value, Operation<T> original) {
         if(value != null) {
-            ((BitmapGlyphAdditions) value).eg_text_customiser$setCodepoint((char) index);
+            ((BitmapGlyphAdditions) value).eg_text_customiser$setCodepoint(index);
         }
         return original.call(instance, index, value);
     }

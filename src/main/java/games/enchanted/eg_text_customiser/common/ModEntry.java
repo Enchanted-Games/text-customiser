@@ -1,5 +1,6 @@
 package games.enchanted.eg_text_customiser.common;
 
+import games.enchanted.eg_text_customiser.common.pack.property_tests.character.CharacterPredicates;
 import games.enchanted.eg_text_customiser.common.pack.property_tests.colour.ColourPredicates;
 import games.enchanted.eg_text_customiser.common.pack.property_tests.font.FontPredicates;
 
@@ -11,5 +12,6 @@ public class ModEntry {
         Logging.info("Mod is loading on a {} environment!", ModConstants.TARGET_PLATFORM);
         ColourPredicates.registerColourPredicates();
         FontPredicates.registerFontPredicates();
+        CharacterPredicates.registerCharacterPredicates();
     }
 }

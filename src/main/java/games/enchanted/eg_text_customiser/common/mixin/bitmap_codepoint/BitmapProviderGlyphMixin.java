@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(targets = "net/minecraft/client/gui/font/providers/BitmapProvider$Glyph", priority = 900)
 public class BitmapProviderGlyphMixin implements BitmapGlyphAdditions {
-    @Unique private char eg_text_customiser$codepoint;
+    @Unique private int eg_text_customiser$codepoint;
 
     @WrapOperation(
         at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/font/GlyphInfo;simple(F)Lcom/mojang/blaze3d/font/GlyphInfo;"),
@@ -22,12 +22,12 @@ public class BitmapProviderGlyphMixin implements BitmapGlyphAdditions {
     }
 
     @Override
-    public void eg_text_customiser$setCodepoint(char codepoint) {
+    public void eg_text_customiser$setCodepoint(int codepoint) {
         this.eg_text_customiser$codepoint = codepoint;
     }
 
     @Override
-    public char eg_text_customiser$getCodepoint() {
+    public int eg_text_customiser$getCodepoint() {
         return this.eg_text_customiser$codepoint;
     }
 }

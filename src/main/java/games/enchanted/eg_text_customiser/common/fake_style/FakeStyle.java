@@ -3,7 +3,6 @@ package games.enchanted.eg_text_customiser.common.fake_style;
 import games.enchanted.eg_text_customiser.common.pack.colour_override.ColourOverrideDefinition;
 import games.enchanted.eg_text_customiser.common.util.ColourUtil;
 import net.minecraft.network.chat.FontDescription;
-import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +18,7 @@ public record FakeStyle(
     @Nullable Boolean obfuscated,
     @Nullable FontDescription font,
     @Nullable DecorationType decorationType,
-    @Nullable Character character,
+    @Nullable Integer codepoint,
     ColourOverrideDefinition.PropertiesPart properties
 ) {
     public FakeStyle(
@@ -32,16 +31,16 @@ public record FakeStyle(
         @Nullable Boolean obfuscated,
         @Nullable FontDescription font,
         @Nullable DecorationType decorationType,
-        @Nullable Character character
+        @Nullable Integer codepoint
     ) {
-        this(colour, shadowColour, bold, italic, underlined, strikethrough, obfuscated, font, decorationType, character, ColourOverrideDefinition.PropertiesPart.DEFAULT);
+        this(colour, shadowColour, bold, italic, underlined, strikethrough, obfuscated, font, decorationType, codepoint, ColourOverrideDefinition.PropertiesPart.DEFAULT);
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof FakeStyle(
             SpecialTextColour colour1, Integer shadowColour1, Boolean bold1, Boolean italic1, Boolean underlined1,
-            Boolean strikethrough1, Boolean obfuscated1, FontDescription font1, DecorationType type, Character character1,
+            Boolean strikethrough1, Boolean obfuscated1, FontDescription font1, DecorationType type, Integer codepoint1,
             ColourOverrideDefinition.PropertiesPart properties1
         ))) return false;
         return Objects.equals(bold, bold1) &&
@@ -53,7 +52,7 @@ public record FakeStyle(
             Objects.equals(font, font1) &&
             Objects.equals(colour, colour1) &&
             Objects.equals(decorationType, type) &&
-            Objects.equals(character, character1) &&
+            Objects.equals(codepoint, codepoint1) &&
             Objects.equals(properties, properties1);
     }
 
@@ -69,7 +68,7 @@ public record FakeStyle(
             ", obfuscated=" + obfuscated +
             ", font=" + font +
             ", decorationType=" + decorationType +
-            ", character=" + character +
+            ", codepoint=" + codepoint +
             ", properties=" + properties +
         '}';
     }
@@ -85,7 +84,7 @@ public record FakeStyle(
             (obfuscated == null ? "" : ", obfuscated=" + obfuscated) +
             (font == null ? "" : ", font=\"" + formatFontDescription(font) + "\"") +
             (decorationType == null ? "" : ", decoration_type=\"" + decorationType + "\"") +
-            (character == null ? "" : ", character=\"" + character + "\"") +
+            (codepoint == null ? "" : ", codepoint=\"" + codepoint + "\"") +
         ']';
     }
 

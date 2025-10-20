@@ -4,9 +4,9 @@ import com.mojang.blaze3d.font.GlyphInfo;
 
 public class CodepointGlyphInfo implements GlyphInfo {
     final float advance;
-    final char codepoint;
+    final int codepoint;
 
-    public CodepointGlyphInfo(float advance, char codepoint) {
+    public CodepointGlyphInfo(float advance, int codepoint) {
         this.advance = advance;
         this.codepoint = codepoint;
     }
@@ -16,7 +16,7 @@ public class CodepointGlyphInfo implements GlyphInfo {
         return advance;
     }
 
-    public char getCodepoint() {
+    public int getCodepoint() {
         return codepoint;
     }
 }
