@@ -9,11 +9,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
-//? if minecraft: >= 1.21.5 {
 import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
-//?} else {
-/^import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
-^///?}
 
 /^
  * This is the entry point for your mod's forge side.
@@ -23,11 +19,7 @@ public class NeoForgeEntry {
     public NeoForgeEntry(IEventBus bus) {
         ModEntry.init();
 
-        //? if minecraft: >= 1.21.5 {
         bus.addListener((AddClientReloadListenersEvent event) -> event.addListener(ColourOverrideReloadListener.NAME, new ColourOverrideReloadListener()));
-        //?} else {
-        /^bus.addListener((RegisterClientReloadListenersEvent event) -> event.registerReloadListener(new ColourOverrideReloadListener()));
-        ^///?}
 
         ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory.class, () -> (client, parent) -> ConfigScreen.createConfigScreen(parent));
     }

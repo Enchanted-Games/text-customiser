@@ -58,7 +58,6 @@ public class TextOverrideManager {
     }
 
     public static synchronized FakeStyle applyFakeColourOverride(@NotNull FakeStyle originalStyle) {
-        // TODO: implement better hash functions for FakeStyle and ColourOverrideDefinition
         Profiling.push("check_matched");
         @Nullable FakeStyle matchedStyle = MATCHED_STYLES.get(originalStyle);
         if(matchedStyle != null) {

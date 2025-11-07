@@ -18,15 +18,7 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
-//? if fabric {
-import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
- //?}
-
-public abstract class JsonReloadListener<T> extends SimplePreparableReloadListener<Map<ResourceLocation, T>>
-//? if fabric {
-    implements IdentifiableResourceReloadListener
-//?}
-{
+public abstract class JsonReloadListener<T> extends SimplePreparableReloadListener<Map<ResourceLocation, T>> {
     protected final Codec<T> resourceCodec;
     protected final ResourceLocation listenerName;
     protected final FileToIdConverter fileToIdConverter;
@@ -77,11 +69,4 @@ public abstract class JsonReloadListener<T> extends SimplePreparableReloadListen
     public @NotNull String getName() {
         return listenerName.toString();
     }
-
-    //? if fabric {
-    @Override
-    public ResourceLocation getFabricId() {
-        return listenerName;
-    }
-    //?}
 }
