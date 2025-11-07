@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import games.enchanted.eg_text_customiser.common.pack.property_tests.character.predicates.BasicCharacterPredicate;
 import games.enchanted.eg_text_customiser.common.pack.property_tests.character.predicates.CharacterPredicate;
+import games.enchanted.eg_text_customiser.common.pack.property_tests.character.predicates.NotCharacterPredicate;
 import games.enchanted.eg_text_customiser.common.serialization.ModCodecs;
 import games.enchanted.eg_text_customiser.common.util.ResourceLocationUtil;
 import net.minecraft.resources.ResourceLocation;
@@ -17,5 +18,6 @@ public class CharacterPredicates {
 
     public static void registerCharacterPredicates() {
         CHARACTER_PREDICATES_MAPPER.put(ResourceLocationUtil.ofMod("simple"), BasicCharacterPredicate.MAP_CODEC);
+        CHARACTER_PREDICATES_MAPPER.put(ResourceLocationUtil.ofMod("not"), NotCharacterPredicate.MAP_CODEC);
     }
 }
