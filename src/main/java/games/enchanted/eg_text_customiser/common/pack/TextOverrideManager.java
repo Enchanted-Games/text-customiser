@@ -11,7 +11,7 @@ import games.enchanted.eg_text_customiser.common.pack.colour_override.ColourOver
 import games.enchanted.eg_text_customiser.common.util.ColourUtil;
 import games.enchanted.eg_text_customiser.common.util.Profiling;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,12 +20,12 @@ import java.util.HashSet;
 import java.util.Map;
 
 public class TextOverrideManager {
-    private static final Map<ResourceLocation, ColourOverrideDefinition> COLOUR_OVERRIDE_DEFINITIONS = new HashMap<>();
+    private static final Map<Identifier, ColourOverrideDefinition> COLOUR_OVERRIDE_DEFINITIONS = new HashMap<>();
 
     private static final Map<FakeStyle, FakeStyle> MATCHED_STYLES = new HashMap<>();
     private static final HashSet<FakeStyle> UNMATCHED_STYLED = new HashSet<>();
 
-    private static void logStyle(FakeStyle style, @Nullable ResourceLocation matchedTo) {
+    private static void logStyle(FakeStyle style, @Nullable Identifier matchedTo) {
         if(!ConfigValues.TEXT_DEBUG_LOGS) return;
         String matchedPart = matchedTo != null ? "(and matched to '" + matchedTo + "')" : "(didn't match)";
         Logging.info("Seen {} style:\n{}", matchedPart, style.formattedString());
@@ -40,7 +40,7 @@ public class TextOverrideManager {
         Profiling.pop();
 
         Profiling.push("loop");
-        for (Map.Entry<ResourceLocation, ColourOverrideDefinition> entry : COLOUR_OVERRIDE_DEFINITIONS.entrySet()) {
+        for (Map.Entry<Identifier, ColourOverrideDefinition> entry : COLOUR_OVERRIDE_DEFINITIONS.entrySet()) {
             Profiling.push("try_find_match");
             if(entry.getValue().styleMatches(style)) {
                 logStyle(style, entry.getKey());
@@ -78,7 +78,7 @@ public class TextOverrideManager {
         return overrideDefinition.applyToStyle(originalStyle);
     }
 
-    public static void registerOverride(ResourceLocation location, ColourOverrideDefinition definition) {
+    public static void registerOverride(Identifier location, ColourOverrideDefinition definition) {
         COLOUR_OVERRIDE_DEFINITIONS.put(location, definition);
     }
 

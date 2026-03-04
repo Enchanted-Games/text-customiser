@@ -18,7 +18,7 @@ public class AtlasGlyphProviderMixin {
         at = @At(value = "NEW", target = "Lnet/minecraft/client/gui/font/AtlasGlyphProvider$Instance;"),
         method = "createGlyph"
     )
-    private AtlasGlyphProvider.Instance eg_text_customiser$replaceAtlasGlyphColours(GlyphRenderTypes renderTypes, GpuTextureView textureView, TextureAtlasSprite sprite, float x, float y, int color, int shadowColor, float shadowOffset, Operation<AtlasGlyphProvider.Instance> original, float ox, float oy, int ocolor, int oshadowColor, Style style) {
+    private AtlasGlyphProvider.Instance eg_text_customiser$replaceAtlasGlyphColours(GlyphRenderTypes renderTypes, GpuTextureView textureView, TextureAtlasSprite sprite, float x, float y, int color, int shadowColor, float shadowOffset, Style style, Operation<AtlasGlyphProvider.Instance> original) {
         final int[] newCols = {color, shadowColor};
         TextOverrideManager.replaceColour(
             color,
@@ -30,6 +30,6 @@ public class AtlasGlyphProviderMixin {
             colourARGB -> newCols[0] = colourARGB,
             shadowARGB -> newCols[1] = shadowARGB
         );
-        return original.call(renderTypes, textureView, sprite, x, y, newCols[0], newCols[1], shadowOffset);
+        return original.call(renderTypes, textureView, sprite, x, y, newCols[0], newCols[1], shadowOffset, style);
     }
 }

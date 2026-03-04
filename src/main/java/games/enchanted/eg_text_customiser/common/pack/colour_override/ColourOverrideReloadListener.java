@@ -4,13 +4,13 @@ import games.enchanted.eg_text_customiser.common.Logging;
 import games.enchanted.eg_text_customiser.common.ModConstants;
 import games.enchanted.eg_text_customiser.common.pack.TextOverrideManager;
 import games.enchanted.eg_text_customiser.common.pack.reload_listener.JsonReloadListener;
-import games.enchanted.eg_text_customiser.common.util.ResourceLocationUtil;
+import games.enchanted.eg_text_customiser.common.util.IdentifierUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.FileToIdConverter;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 
@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class ColourOverrideReloadListener extends JsonReloadListener<ColourOverrideDefinition>
 {
-    public static final ResourceLocation NAME = ResourceLocationUtil.ofMod("colour_override_listener");
+    public static final Identifier NAME = IdentifierUtil.ofMod("colour_override_listener");
 
     private static final FileToIdConverter LISTER = FileToIdConverter.json("eg_text_customiser/color_overrides");
 
@@ -27,14 +27,14 @@ public class ColourOverrideReloadListener extends JsonReloadListener<ColourOverr
     }
 
     @Override
-    protected void apply(Map<ResourceLocation, ColourOverrideDefinition> overrideDefinitions, ResourceManager resourceManager, ProfilerFiller profiler) {
+    protected void apply(Map<Identifier, ColourOverrideDefinition> overrideDefinitions, ResourceManager resourceManager, ProfilerFiller profiler) {
         Logging.info("Running ColourOverrideReloadListener");
         TextOverrideManager.clearCaches();
         overrideDefinitions.forEach(TextOverrideManager::registerOverride);
     }
 
     @Override
-    protected void showErrors(Map<ResourceLocation, Exception> erroredFiles) {
+    protected void showErrors(Map<Identifier, Exception> erroredFiles) {
         if(erroredFiles.isEmpty()) return;
         SystemToast.addOrUpdate(
             //? if minecraft: <= 1.21.4 {

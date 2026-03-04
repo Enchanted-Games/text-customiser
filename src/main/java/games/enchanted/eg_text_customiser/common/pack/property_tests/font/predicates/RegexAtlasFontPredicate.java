@@ -3,31 +3,31 @@ package games.enchanted.eg_text_customiser.common.pack.property_tests.font.predi
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.chat.FontDescription;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.ResourceLocationPattern;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.IdentifierPattern;
 
 public class RegexAtlasFontPredicate implements FontPredicate {
     public static final MapCodec<RegexAtlasFontPredicate> MAP_CODEC = RecordCodecBuilder.mapCodec(instance ->
         instance.group(
-            ResourceLocationPattern.CODEC.fieldOf("atlas").forGetter(predicate -> predicate.atlas),
-            ResourceLocationPattern.CODEC.fieldOf("sprite").forGetter(predicate -> predicate.sprite)
+            IdentifierPattern.CODEC.fieldOf("atlas").forGetter(predicate -> predicate.atlas),
+            IdentifierPattern.CODEC.fieldOf("sprite").forGetter(predicate -> predicate.sprite)
         ).apply(
             instance,
             RegexAtlasFontPredicate::new
         )
     );
 
-    private final ResourceLocationPattern atlas;
-    private final ResourceLocationPattern sprite;
+    private final IdentifierPattern atlas;
+    private final IdentifierPattern sprite;
 
-    public RegexAtlasFontPredicate(ResourceLocationPattern atlas, ResourceLocationPattern sprite) {
+    public RegexAtlasFontPredicate(IdentifierPattern atlas, IdentifierPattern sprite) {
         this.atlas = atlas;
         this.sprite = sprite;
     }
 
     @Override
     public boolean fontMatches(FontDescription font) {
-        if(!(font instanceof FontDescription.AtlasSprite(ResourceLocation atlasId, ResourceLocation spriteId))) {
+        if(!(font instanceof FontDescription.AtlasSprite(Identifier atlasId, Identifier spriteId))) {
             return false;
         }
         return this.atlas.locationPredicate().test(atlasId) && this.sprite.locationPredicate().test(spriteId);

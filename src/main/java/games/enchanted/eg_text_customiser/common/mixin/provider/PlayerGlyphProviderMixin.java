@@ -18,7 +18,7 @@ public class PlayerGlyphProviderMixin {
         at = @At(value = "NEW", target = "Lnet/minecraft/client/gui/font/PlayerGlyphProvider$Instance;"),
         method = "createGlyph"
     )
-    private PlayerGlyphProvider.Instance eg_text_customiser$replacePlayerGlyphColours(Supplier<PlayerSkinRenderCache.RenderInfo> skin, boolean hat, float x, float y, int color, int shadowColor, float shadowOffset, Operation<PlayerGlyphProvider.Instance> original, float ox, float oy, int ocolor, int oshadowColor, Style style) {
+    private PlayerGlyphProvider.Instance eg_text_customiser$replacePlayerGlyphColours(Supplier<PlayerSkinRenderCache.RenderInfo> skin, boolean hat, float x, float y, int color, int shadowColor, float shadowOffset, Style style, Operation<PlayerGlyphProvider.Instance> original) {
         final int[] newCols = {color, shadowColor};
         TextOverrideManager.replaceColour(
             color,
@@ -30,6 +30,6 @@ public class PlayerGlyphProviderMixin {
             colourARGB -> newCols[0] = colourARGB,
             shadowARGB -> newCols[1] = shadowARGB
         );
-        return original.call(skin, hat, x, y, newCols[0], newCols[1], shadowOffset);
+        return original.call(skin, hat, x, y, newCols[0], newCols[1], shadowOffset, style);
     }
 }

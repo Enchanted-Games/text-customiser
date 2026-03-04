@@ -16,7 +16,6 @@
     "accessor.TextColorAccess",
     "bitmap_codepoint.BitmapProviderDefinitionMixin",
     "bitmap_codepoint.BitmapProviderGlyphMixin",
-    "bitmap_codepoint.BitmapProviderMixin",
     "glyph.EffectInstanceMixin",
     "glyph.GlyphInstanceMixin"
   ],

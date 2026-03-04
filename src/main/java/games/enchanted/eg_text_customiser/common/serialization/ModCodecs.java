@@ -6,14 +6,14 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import net.minecraft.network.chat.FontDescription;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.List;
 import java.util.function.Function;
 
 public class ModCodecs {
-    public static Codec<FontDescription> RESOURCE_FONT_DESCRIPTION = ResourceLocation.CODEC.flatComapMap(FontDescription.Resource::new, (fontDescription) -> {
-        if (fontDescription instanceof FontDescription.Resource(ResourceLocation id)) {
+    public static Codec<FontDescription> RESOURCE_FONT_DESCRIPTION = Identifier.CODEC.flatComapMap(FontDescription.Resource::new, (fontDescription) -> {
+        if (fontDescription instanceof FontDescription.Resource(Identifier id)) {
             return DataResult.success(id);
         }
         return DataResult.error(() -> "Invalid font description type: " + fontDescription + ". Expected a Resource type");

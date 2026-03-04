@@ -3,7 +3,7 @@ package games.enchanted.eg_text_customiser.common.pack.property_tests.font.predi
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.chat.FontDescription;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -11,8 +11,8 @@ import java.util.Optional;
 public class BasicAtlasFontPredicate implements FontPredicate {
     public static final MapCodec<BasicAtlasFontPredicate> MAP_CODEC = RecordCodecBuilder.mapCodec(instance ->
         instance.group(
-            ResourceLocation.CODEC.optionalFieldOf("atlas").forGetter(predicate -> Optional.ofNullable(predicate.atlas)),
-            ResourceLocation.CODEC.optionalFieldOf("sprite").forGetter(predicate -> Optional.ofNullable(predicate.sprite))
+            Identifier.CODEC.optionalFieldOf("atlas").forGetter(predicate -> Optional.ofNullable(predicate.atlas)),
+            Identifier.CODEC.optionalFieldOf("sprite").forGetter(predicate -> Optional.ofNullable(predicate.sprite))
         ).apply(
             instance,
             (atlasLocation, spriteLocation) -> new BasicAtlasFontPredicate(
@@ -22,10 +22,10 @@ public class BasicAtlasFontPredicate implements FontPredicate {
         )
     );
 
-    private final @Nullable ResourceLocation atlas;
-    private final @Nullable ResourceLocation sprite;
+    private final @Nullable Identifier atlas;
+    private final @Nullable Identifier sprite;
 
-    public BasicAtlasFontPredicate(@Nullable ResourceLocation atlas, @Nullable ResourceLocation sprite) {
+    public BasicAtlasFontPredicate(@Nullable Identifier atlas, @Nullable Identifier sprite) {
         this.atlas = atlas;
         this.sprite = sprite;
     }

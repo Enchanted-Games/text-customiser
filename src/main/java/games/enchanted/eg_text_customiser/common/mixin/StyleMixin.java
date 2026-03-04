@@ -6,7 +6,7 @@ import games.enchanted.eg_text_customiser.common.duck.StyleAdditions;
 import games.enchanted.eg_text_customiser.common.fake_style.SignTextData;
 import games.enchanted.eg_text_customiser.common.mixin.accessor.StyleInvoker;
 import net.minecraft.network.chat.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;

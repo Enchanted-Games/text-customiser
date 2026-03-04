@@ -3,7 +3,7 @@ package games.enchanted.eg_text_customiser.common.pack.property_tests;
 
 import games.enchanted.eg_text_customiser.common.pack.property_tests.font.predicates.FontPredicate;
 import net.minecraft.network.chat.FontDescription;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;

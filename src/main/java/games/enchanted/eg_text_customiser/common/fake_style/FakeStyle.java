@@ -3,7 +3,7 @@ package games.enchanted.eg_text_customiser.common.fake_style;
 import games.enchanted.eg_text_customiser.common.pack.colour_override.ColourOverrideDefinition;
 import games.enchanted.eg_text_customiser.common.util.ColourUtil;
 import net.minecraft.network.chat.FontDescription;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.component.ResolvableProfile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -91,9 +91,9 @@ public record FakeStyle(
     }
 
     private static String formatFontDescription(FontDescription font) {
-        if(font instanceof FontDescription.Resource(ResourceLocation id)) {
+        if(font instanceof FontDescription.Resource(Identifier id)) {
             return "\"" + id + "\"";
-        } else if(font instanceof FontDescription.AtlasSprite(ResourceLocation atlasId, ResourceLocation spriteId)) {
+        } else if(font instanceof FontDescription.AtlasSprite(Identifier atlasId, Identifier spriteId)) {
             return "[type=atlas_sprite, atlas\"" + atlasId + "\", sprite\"" + spriteId + "\"]";
         }
         else if(font instanceof FontDescription.PlayerSprite(ResolvableProfile profile, boolean hat)) {

@@ -6,7 +6,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import games.enchanted.eg_text_customiser.common.Logging;
 import net.minecraft.resources.FileToIdConverter;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
@@ -18,31 +18,31 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class JsonReloadListener<T> extends SimplePreparableReloadListener<Map<ResourceLocation, T>> {
+public abstract class JsonReloadListener<T> extends SimplePreparableReloadListener<Map<Identifier, T>> {
     protected final Codec<T> resourceCodec;
-    protected final ResourceLocation listenerName;
+    protected final Identifier listenerName;
     protected final FileToIdConverter fileToIdConverter;
 
-    protected JsonReloadListener(Codec<T> resourceCodec, FileToIdConverter fileToIdConverter, ResourceLocation listenerName) {
+    protected JsonReloadListener(Codec<T> resourceCodec, FileToIdConverter fileToIdConverter, Identifier listenerName) {
         this.resourceCodec = resourceCodec;
         this.listenerName = listenerName;
         this.fileToIdConverter = fileToIdConverter;
     }
 
     @Override
-    protected @NotNull Map<ResourceLocation, T> prepare(ResourceManager resourceManager, ProfilerFiller profiler) {
-        Map<ResourceLocation, T> map = new HashMap<>();
+    protected @NotNull Map<Identifier, T> prepare(ResourceManager resourceManager, ProfilerFiller profiler) {
+        Map<Identifier, T> map = new HashMap<>();
         parseFromDirectory(resourceManager, this.fileToIdConverter, this.resourceCodec, map);
         return map;
     }
 
-    protected abstract void showErrors(Map<ResourceLocation, Exception> erroredFiles);
+    protected abstract void showErrors(Map<Identifier, Exception> erroredFiles);
 
-    private void parseFromDirectory(ResourceManager resourceManager, FileToIdConverter fileToIdConverter, Codec<T> resourceCodec, Map<ResourceLocation, T> outputMap) {
-        Map<ResourceLocation, Exception> erroredFiles = new HashMap<>();
-        for(Map.Entry<ResourceLocation, Resource> resource : fileToIdConverter.listMatchingResources(resourceManager).entrySet()) {
-            ResourceLocation rawFileLocation = resource.getKey();
-            ResourceLocation idLocation = fileToIdConverter.fileToId(rawFileLocation);
+    private void parseFromDirectory(ResourceManager resourceManager, FileToIdConverter fileToIdConverter, Codec<T> resourceCodec, Map<Identifier, T> outputMap) {
+        Map<Identifier, Exception> erroredFiles = new HashMap<>();
+        for(Map.Entry<Identifier, Resource> resource : fileToIdConverter.listMatchingResources(resourceManager).entrySet()) {
+            Identifier rawFileLocation = resource.getKey();
+            Identifier idLocation = fileToIdConverter.fileToId(rawFileLocation);
 
             try(Reader resourceReader = resource.getValue().openAsReader()) {
                 resourceCodec.parse(JsonOps.INSTANCE, JsonParser.parseReader(resourceReader)).ifSuccess(parsedResource -> {

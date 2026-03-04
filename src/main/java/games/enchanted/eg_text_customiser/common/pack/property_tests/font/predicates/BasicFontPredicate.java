@@ -6,7 +6,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import games.enchanted.eg_text_customiser.common.serialization.ModCodecs;
 import net.minecraft.network.chat.FontDescription;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class BasicFontPredicate implements FontPredicate {
     public static final Codec<? extends FontPredicate> CODEC = ModCodecs.RESOURCE_FONT_DESCRIPTION.comapFlatMap(
